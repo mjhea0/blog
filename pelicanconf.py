@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 AUTHOR = u'Kyle W. Purdon'
 SITENAME = u'Technology by {0}'.format(AUTHOR)
-SITEURL = ''
+SITEURL = 'http://kylepurdon.com/blog'
 
 DISPLAY_CATEGORIES_ON_MENU = False
 
