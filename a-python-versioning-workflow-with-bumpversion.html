@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>A Python Versioning Workflow with Bumpversion - Technology by Kyle W. Purdon</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="/a-python-versioning-workflow-with-bumpversion.html">
+
+        <meta name="author" content="Kyle W. Purdon" />
+        <meta name="keywords" content="python,development,version" />
+        <meta name="description" content="Bumpversion is a python versioning utility. This post details a specific example of it&#39;s usage for continously integrated and deployed Python packages." />
+
+        <meta property="og:site_name" content="Technology by Kyle W. Purdon" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="A Python Versioning Workflow with Bumpversion"/>
+        <meta property="og:url" content="/a-python-versioning-workflow-with-bumpversion.html"/>
+        <meta property="og:description" content="Bumpversion is a python versioning utility. This post details a specific example of it&#39;s usage for continously integrated and deployed Python packages."/>
+        <meta property="article:published_time" content="2015-01-25" />
+            <meta property="article:section" content="Software" />
+            <meta property="article:tag" content="python" />
+            <meta property="article:tag" content="development" />
+            <meta property="article:tag" content="version" />
+            <meta property="article:author" content="Kyle W. Purdon" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/theme/css/pygments/native.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+Technology by Kyle W. Purdon            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="/a-python-versioning-workflow-with-bumpversion.html"
+                       rel="bookmark"
+                       title="Permalink to A Python Versioning Workflow with Bumpversion">
+                        A Python Versioning Workflow with Bumpversion
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-01-25T20:32:00-07:00"> Sun 25 January 2015</time>
+    </span>
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="/tag/python.html">python</a>
+        /
+	<a href="/tag/development.html">development</a>
+        /
+	<a href="/tag/version.html">version</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>Recently, at <a href="http://nsidc.org">NSIDC</a> we developed a workflow for creating, continuously integrating, and releasing Python packages. A key aspect of this project was automating the process of versioning for development pre-releases and production releases. I devised a solution using the Python <a href="https://pypi.python.org/pypi/bumpversion/0.5.0">bumpversion</a> utility.</p>
+<h1>What Is Bumpversion?</h1>
+<blockquote>
+<p>[Bumpversion is] a small command line tool to simplify releasing software by updating all version strings in your source code by the correct increment.</p>
+</blockquote>
+<p>I have used bumpversion many times in <a href="https://github.com/kpurdon">personal projects</a> and we have used the tool at NSIDC as well. However we have mostly been using the default implementation of bumpversion.</p>
+<p>The basic setup of bumpversion is to drop a .bumversion.cfg in the root of your project that contains the following code:</p>
+<div class="highlight"><pre><span class="p">[</span><span class="n">bumpversion</span><span class="p">]</span>
+<span class="n">current_version</span> <span class="o">=</span> <span class="mf">0.0</span><span class="o">.</span><span class="mi">0</span>
+<span class="n">commit</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">tag</span> <span class="o">=</span> <span class="bp">True</span>
+</pre></div>
+
+
+<p>With this file, and bumversion installed you can run the command</p>
+<div class="highlight"><pre><span class="nv">$ </span>bumpversion <span class="o">[</span>patch <span class="p">|</span> minor <span class="p">|</span> major<span class="o">]</span>
+</pre></div>
+
+
+<p>which will bump the version to 0.0.1, 0.1.0, or 1.0.0 respectively (assuming you started at 0.0.0). In addition because the commit, and tag flags are set to true bumpversion will create a tag and commit to your git repository. (<a href="https://github.com/kpurdon/pymr/commit/5e87677563527beb6126b4c991abb53afbeb2a93">see this commit for an example</a>).</p>
+<p>This setup works great if all you care about is patch, minor, or major versions. However when you need something like 1.0.0rc to indicate a pre-release (or snapshot) the setup is slightly more complex.</p>
+<h1>NSIDC Python Package Workflow</h1>
+<p>Our current workflow for generating a Python package at NSIDC follows:</p>
+<ol>
+<li>Developer creates a feature branch.</li>
+<li>Developer creates and commits the feature.</li>
+<li>Developer creates a pull request.</li>
+<li>Development team reviews pull requests and merges to master when appropriate.</li>
+<li>A custom <a href="http://jenkins-ci.org/">Jenkins</a> integration server runs a series of tests.</li>
+<li>A custom <a href="http://jenkins-ci.org/">Jenkins</a> integration server publishes a python package to an internal  <a href="http://doc.devpi.net/latest/">devpi</a> server. (snapshot)</li>
+<li>A developer clicks a button to create a new production release.</li>
+<li>A custom <a href="http://jenkins-ci.org/">Jenkins</a> integration server publishes a python package to an internal  <a href="http://doc.devpi.net/latest/">devpi</a> server. (production) and removes and snapshot packages.</li>
+</ol>
+<p>Versioning comes into play at step 1 and step 7 in this workflow. To make this clear lets assume the current version is 1.0.0rc and we are at step 7 in the process. This step will execute the following tasks:</p>
+<h2>1. Bump Release Version</h2>
+<h3>Starting Version: 1.0.0rc</h3>
+<p>The release job runs the command <code>bumpversion release</code> which essentially drops and release qualifier ("rc" in this case) from the version.</p>
+<h3>Ending Version: 1.0.0</h3>
+<h2>2. Build Release Package</h2>
+<p>With a production version (no "rc") the job will build and release the package to an internal repo.</p>
+<h2>3. Prepare Next Development Version</h2>
+<h3>Starting Version: 1.0.0</h3>
+<p>To prepare the project git repository for the next developer to pick up at step 1 the job will run <code>bumpversion patch</code>. Because of the custom configuration (described in the next section) the version will now be 1.0.1rc. This means that the next developer will be starting with the next (lowest possible) release candidate.</p>
+<h3>Ending Version: 1.0.1rc</h3>
+<p>Note that we chose to use "patch" as the default next version. If the developer wants to work on a minor or major feature they can manually run <code>bumpversion [minor|major]</code> on the feature branch which would result in versions of 1.1.0rc or 2.0.0rc in the given example.</p>
+<h1>NSIDC Bumpversion Implementation</h1>
+<p>The following is an example of the .bumversion.cfg we have devised for achieving the workflow outlined above:</p>
+<div class="highlight"><pre><span class="p">[</span><span class="n">bumpversion</span><span class="p">]</span>
+<span class="n">current_version</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">.</span><span class="mi">0</span>
+<span class="n">commit</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">tag</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">parse</span> <span class="o">=</span> <span class="p">(</span><span class="err">?</span><span class="n">P</span><span class="o">&lt;</span><span class="n">major</span><span class="o">&gt;</span>\<span class="n">d</span><span class="o">+</span><span class="p">)</span>\<span class="o">.</span><span class="p">(</span><span class="err">?</span><span class="n">P</span><span class="o">&lt;</span><span class="n">minor</span><span class="o">&gt;</span>\<span class="n">d</span><span class="o">+</span><span class="p">)</span>\<span class="o">.</span><span class="p">(</span><span class="err">?</span><span class="n">P</span><span class="o">&lt;</span><span class="n">patch</span><span class="o">&gt;</span>\<span class="n">d</span><span class="o">+</span><span class="p">)((</span><span class="err">?</span><span class="n">P</span><span class="o">&lt;</span><span class="n">release</span><span class="o">&gt;.*</span><span class="p">))</span><span class="err">?</span>
+<span class="n">serialize</span> <span class="o">=</span>
+    <span class="p">{</span><span class="n">major</span><span class="p">}</span><span class="o">.</span><span class="p">{</span><span class="n">minor</span><span class="p">}</span><span class="o">.</span><span class="p">{</span><span class="n">patch</span><span class="p">}{</span><span class="n">release</span><span class="p">}</span>
+    <span class="p">{</span><span class="n">major</span><span class="p">}</span><span class="o">.</span><span class="p">{</span><span class="n">minor</span><span class="p">}</span><span class="o">.</span><span class="p">{</span><span class="n">patch</span><span class="p">}</span>
+
+<span class="p">[</span><span class="n">bumpversion</span><span class="p">:</span><span class="n">part</span><span class="p">:</span><span class="n">release</span><span class="p">]</span>
+<span class="n">optional_value</span> <span class="o">=</span> <span class="n">production</span>
+<span class="n">values</span> <span class="o">=</span>
+    <span class="n">rc</span>
+    <span class="n">production</span>
+</pre></div>
+
+
+<p>The following outlines the additions and modifications from the default example and there purpose:</p>
+<h2>bumpversion:part:release</h2>
+<div class="highlight"><pre><span class="p">[</span><span class="n">bumpversion</span><span class="p">:</span><span class="n">part</span><span class="p">:</span><span class="n">release</span><span class="p">]</span>
+<span class="n">optional_value</span> <span class="o">=</span> <span class="n">production</span>
+<span class="n">values</span> <span class="o">=</span>
+    <span class="n">rc</span>
+    <span class="n">production</span>
+</pre></div>
+
+
+<p>This section adds an additional object to the default version number, the "release" part. This is the "rc" in the version 1.0.0rc. Note that we define two values "rc" and "production" and define the "production" value as optional.</p>
+<p>Let's start with the version 1.0.0 and see what happens as we run a series of bumpversion commands:</p>
+<h3>Patch Version</h3>
+<h4>Starting Version: 1.0.0</h4>
+<h4>Command: <code>bumpversion patch</code></h4>
+<h4>Ending Version: 1.0.1rc</h4>
+<p>Note that minor and major perform the same as patch.</p>
+<h3>Release Version</h3>
+<h4>Starting Version: 2.0.0rc</h4>
+<h4>Command: <code>bumpversion release</code></h4>
+<h4>Ending Version: 2.0.0</h4>
+<p>Because we have added a "release" part and set the first value to "rc" any time that we run bumpversion with patch, minor, or major the "rc" part will be included in the version. Then when we "bump" the release value using <code>bumpversion release</code> it will become "production", which because it is set to optional will be omitted resulting in a version with only major.minor.patch.</p>
+<h2>Custom parse &amp; serialize</h2>
+<div class="highlight"><pre><span class="n">parse</span> <span class="o">=</span> <span class="p">(</span><span class="err">?</span><span class="n">P</span><span class="o">&lt;</span><span class="n">major</span><span class="o">&gt;</span>\<span class="n">d</span><span class="o">+</span><span class="p">)</span>\<span class="o">.</span><span class="p">(</span><span class="err">?</span><span class="n">P</span><span class="o">&lt;</span><span class="n">minor</span><span class="o">&gt;</span>\<span class="n">d</span><span class="o">+</span><span class="p">)</span>\<span class="o">.</span><span class="p">(</span><span class="err">?</span><span class="n">P</span><span class="o">&lt;</span><span class="n">patch</span><span class="o">&gt;</span>\<span class="n">d</span><span class="o">+</span><span class="p">)((</span><span class="err">?</span><span class="n">P</span><span class="o">&lt;</span><span class="n">release</span><span class="o">&gt;.*</span><span class="p">))</span><span class="err">?</span>
+<span class="n">serialize</span> <span class="o">=</span>
+    <span class="p">{</span><span class="n">major</span><span class="p">}</span><span class="o">.</span><span class="p">{</span><span class="n">minor</span><span class="p">}</span><span class="o">.</span><span class="p">{</span><span class="n">patch</span><span class="p">}{</span><span class="n">release</span><span class="p">}</span>
+    <span class="p">{</span><span class="n">major</span><span class="p">}</span><span class="o">.</span><span class="p">{</span><span class="n">minor</span><span class="p">}</span><span class="o">.</span><span class="p">{</span><span class="n">patch</span><span class="p">}</span>
+</pre></div>
+
+
+<p>This block parses and serializes the version number. The default value for these is:</p>
+<div class="highlight"><pre><span class="n">parse</span> <span class="o">=</span> <span class="p">(</span><span class="err">?</span><span class="n">P</span><span class="o">&lt;</span><span class="n">major</span><span class="o">&gt;</span>\<span class="n">d</span><span class="o">+</span><span class="p">)</span>\<span class="o">.</span><span class="p">(</span><span class="err">?</span><span class="n">P</span><span class="o">&lt;</span><span class="n">minor</span><span class="o">&gt;</span>\<span class="n">d</span><span class="o">+</span><span class="p">)</span>\<span class="o">.</span><span class="p">(</span><span class="err">?</span><span class="n">P</span><span class="o">&lt;</span><span class="n">patch</span><span class="o">&gt;</span>\<span class="n">d</span><span class="o">+</span><span class="p">)</span>
+<span class="n">serialize</span> <span class="o">=</span>
+    <span class="p">{</span><span class="n">major</span><span class="p">}</span><span class="o">.</span><span class="p">{</span><span class="n">minor</span><span class="p">}</span><span class="o">.</span><span class="p">{</span><span class="n">patch</span><span class="p">}</span>
+</pre></div>
+
+
+<p>Note that we have added "release" both to parse and serialize. The parse is just Python regex <code>((?P&lt;release&gt;.*))?</code> which is looking for any value (including an empty value) and storing it as "release". Serialize is simply a template specifying and additional possible serializer which includes the <code>{release}</code> part.</p>
+<h1>Conclusion</h1>
+<p>Note that bumpversion provides a <a href="https://github.com/peritus/bumpversion#part-specific-configuration">similar example</a> which I found a bit too confusing given the arbitrary values. I hope that the more concrete example I have outlined above will clarify the additional part configuration a bit.</p>
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+              <ul class="list-group" id="social">
+                <li class="list-group-item"><a href="https://twitter.com/PurdonKyle"><i class="fa fa-twitter-square fa-lg"></i> Twitter</a></li>
+                <li class="list-group-item"><a href="https://github.com/kpurdon"><i class="fa fa-github-square fa-lg"></i> Github</a></li>
+                <li class="list-group-item"><a href="https://plus.google.com/u/0/+KylePurdon"><i class="fa fa-google-plus-square fa-lg"></i> Google+</a></li>
+                <li class="list-group-item"><a href="http://www.reddit.com/user/kpurdon/"><i class="fa fa-reddit-square fa-lg"></i> Reddit</a></li>
+                <li class="list-group-item"><a href="https://www.linkedin.com/in/kylepurdon"><i class="fa fa-linkedin-square fa-lg"></i> LinkedIn</a></li>
+              </ul>
+            </li>
+
+
+
+            <li class="list-group-item"><a href="/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <ul class="list-group " id="tags">
+                </ul>
+            </li>
+
+
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2015 Kyle W. Purdon
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+
+
+</body>
+</html>

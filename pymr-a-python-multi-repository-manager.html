@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>PyMR A Python Multi-Repository Manager - Technology by Kyle W. Purdon</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="/pymr-a-python-multi-repository-manager.html">
+
+        <meta name="author" content="Kyle W. Purdon" />
+        <meta name="keywords" content="python,development" />
+        <meta name="description" content="PyMR is a is Python command-line utility for running operations on sets of tagged directories." />
+
+        <meta property="og:site_name" content="Technology by Kyle W. Purdon" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="PyMR A Python Multi-Repository Manager"/>
+        <meta property="og:url" content="/pymr-a-python-multi-repository-manager.html"/>
+        <meta property="og:description" content="PyMR is a is Python command-line utility for running operations on sets of tagged directories."/>
+        <meta property="article:published_time" content="2014-11-11" />
+            <meta property="article:section" content="Software" />
+            <meta property="article:tag" content="python" />
+            <meta property="article:tag" content="development" />
+            <meta property="article:author" content="Kyle W. Purdon" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/theme/css/pygments/native.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+Technology by Kyle W. Purdon            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="/pymr-a-python-multi-repository-manager.html"
+                       rel="bookmark"
+                       title="Permalink to PyMR A Python Multi-Repository Manager">
+                        PyMR A Python Multi-Repository Manager
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2014-11-11T19:35:00-07:00"> Tue 11 November 2014</time>
+    </span>
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="/tag/python.html">python</a>
+        /
+	<a href="/tag/development.html">development</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p><a href="https://github.com/kpurdon/pymr">PyMR</a> is Python command-line utility for running operations on sets of tagged directories. I wrote PyMR in response to an issue development team I was part of ran into.</p>
+<h1>The Issue</h1>
+<p>At <a href="http://nsidc.org">NSIDC</a> we recently developed a polar data visualization application called <a href="http://nsidc.org/soac">Satellite Observations of Arctic Change (SOAC)</a>.</p>
+<p>This application required quite a few components including:</p>
+<ul>
+<li>A JavaScript Web Application (Backbone, Leaflet)</li>
+<li>A Python Web Service (Flask)</li>
+<li>A Customized MapServer (MapServer)</li>
+<li>A Python Data Processing Pipeline (SciPy Stack)</li>
+<li>A Data Processing VM</li>
+<li>A Web VM (NGINX, Gunicorn, Upstart)</li>
+</ul>
+<p>All of these components are developed in separate git repositories which means we end up with a project structure that looks like this:</p>
+<div class="highlight"><pre>└── soac
+    ├── soac-data
+    ├── soac-data-vm
+    ├── soac-mapserver
+    ├── soac-service
+    ├── soac-vm
+    └── soac-webapp
+</pre></div>
+
+
+<p>This is perfect for our development workflow and allows us to develop, test, and deploy all of the components independently.</p>
+<h2>So what's the problem?</h2>
+<h3>Versioning</h3>
+<p>When we are ready to release a version of the project we generally run some form of the command:</p>
+<div class="highlight"><pre><span class="nv">$ </span>git tag v#.#.# <span class="o">&amp;&amp;</span> git push --tags
+</pre></div>
+
+
+<p>The problem is that, although we have 6 repositories, we only have two release-able things.</p>
+<ol>
+<li>The Web Application (soac-vm + soac-service + soac-mapserver + soac-webapp)</li>
+<li>The Data Application (soac-data-vm + soac-data)</li>
+</ol>
+<p>Say we want to release a new version of the web application we end up doing something like this:</p>
+<div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd </span>soac-vm <span class="o">&amp;&amp;</span> git tag v#.#.# <span class="o">&amp;&amp;</span> git push --tags
+<span class="nv">$ </span><span class="nb">cd </span>soac-service <span class="o">&amp;&amp;</span> git tag v#.#.# <span class="o">&amp;&amp;</span> git push --tags
+<span class="nv">$ </span><span class="nb">cd </span>soac-webapp <span class="o">&amp;&amp;</span> git tag v#.#.# <span class="o">&amp;&amp;</span> git push --tags
+<span class="nv">$ </span><span class="nb">cd </span>soac-mapserver <span class="o">&amp;&amp;</span> git tag v#.#.# <span class="o">&amp;&amp;</span> git push --tags
+</pre></div>
+
+
+<p>This process involves a lot of human interaction and is prone to error. Initially a bash script was created to solve this issue however I found that unsatisfactory.</p>
+<p>PyMR was created to simplify this process.</p>
+<h1>Introducting PyMR</h1>
+<p>I created PyMR to simplify the problem outlined above.</p>
+<p>After <a href="http://pymr.readthedocs.org/en/latest/installation/">installing</a> PyMR the tool allows us to "register" directories.</p>
+<p>In the case of the SOAC application we want two sets of registered directories.</p>
+<ol>
+<li>The "web" directories</li>
+<li>The "data" directories</li>
+</ol>
+<p>Here is how we do it:</p>
+<div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd </span>soac-vm <span class="o">&amp;&amp;</span> pymr-register -t web
+<span class="nv">$ </span><span class="nb">cd </span>soac-service <span class="o">&amp;&amp;</span> pymr-register -t web
+<span class="nv">$ </span><span class="nb">cd </span>soac-webapp <span class="o">&amp;&amp;</span> pymr-register -t web
+<span class="nv">$ </span><span class="nb">cd </span>soac-mapserver <span class="o">&amp;&amp;</span> pymr-register -t web
+<span class="nv">$ </span><span class="nb">cd </span>soac-data-vm <span class="o">&amp;&amp;</span> pymr-register -t data
+<span class="nv">$ </span><span class="nb">cd </span>soac-data <span class="o">&amp;&amp;</span> pymr-register -t data
+</pre></div>
+
+
+<p>This set of commands will create a file called ".pymr" in each of the directories where the register command was executed. The ".pymr" file has the following simple structure:</p>
+<div class="highlight"><pre><span class="k">[tags]</span>
+<span class="na">tags</span> <span class="o">=</span> <span class="s">web</span>
+</pre></div>
+
+
+<p>Now let's say we want to create a release of the SOAC web application.</p>
+<h2>Before (Without PyMR)</h2>
+<div class="highlight"><pre>::: bash
+<span class="nv">$ </span><span class="nb">cd </span>soac-vm <span class="o">&amp;&amp;</span> git tag v#.#.# <span class="o">&amp;&amp;</span> git push --tags
+<span class="nv">$ </span><span class="nb">cd </span>soac-service <span class="o">&amp;&amp;</span> git tag v#.#.# <span class="o">&amp;&amp;</span> git push --tags
+<span class="nv">$ </span><span class="nb">cd </span>soac-webapp <span class="o">&amp;&amp;</span> git tag v#.#.# <span class="o">&amp;&amp;</span> git push --tags
+<span class="nv">$ </span><span class="nb">cd </span>soac-mapserver <span class="o">&amp;&amp;</span> git tag v#.#.# <span class="o">&amp;&amp;</span> git push --tags
+</pre></div>
+
+
+<h2>After (With PyMR)</h2>
+<div class="highlight"><pre>pymr-run -t web <span class="s1">&#39;git tag v#.#.# &amp;&amp; git push --tags&#39;</span>
+</pre></div>
+
+
+<p>The "pymr-run" command will find all of the ".pymr" files that contain the tag "web" and then execute the given command in that directory.</p>
+<p>I believe this is a simple, easy to install, and easy to use solution to a common development problem.</p>
+<h1>What About (MU/MR/GR)?</h1>
+<p>Yes, other tools have already solved this problem. Here are the common ones I explored before creating PyMR:</p>
+<ul>
+<li><a href="http://mixu.net/gr/">GR</a></li>
+<li><a href="http://myrepos.branchable.com/">MR</a></li>
+<li><a href="https://github.com/fabioz/mu-repo">MU</a></li>
+</ul>
+<p>I found flaws in each of these tools that did not allow me to complete the task at hand in a satisfactory manner.</p>
+<p>The biggest selling feature of PyMR (in my opinion) over others is that PyMR creates a configuration file (.pymr) WITH THE SOURCE DIRECTORY. Most of the above tools (if not all) create a single configuration file in the home directory which maps all of the "tagged" or "registered" directories so commands can be executed on them later. This does not allow the configuration to be source controlled and shared among a development team with the actual project source code.</p>
+<p>In addition another selling feature of PyMR is that it is command agnostic. Meaning that any command you can run in the terminal you can pass to PyMR.</p>
+<h1>Whats Next?</h1>
+<ol>
+<li>Try out PyMR on your own projects!</li>
+<li>Find bugs, submit issues, think of features!</li>
+<li>Contribute!</li>
+</ol>
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+              <ul class="list-group" id="social">
+                <li class="list-group-item"><a href="https://twitter.com/PurdonKyle"><i class="fa fa-twitter-square fa-lg"></i> Twitter</a></li>
+                <li class="list-group-item"><a href="https://github.com/kpurdon"><i class="fa fa-github-square fa-lg"></i> Github</a></li>
+                <li class="list-group-item"><a href="https://plus.google.com/u/0/+KylePurdon"><i class="fa fa-google-plus-square fa-lg"></i> Google+</a></li>
+                <li class="list-group-item"><a href="http://www.reddit.com/user/kpurdon/"><i class="fa fa-reddit-square fa-lg"></i> Reddit</a></li>
+                <li class="list-group-item"><a href="https://www.linkedin.com/in/kylepurdon"><i class="fa fa-linkedin-square fa-lg"></i> LinkedIn</a></li>
+              </ul>
+            </li>
+
+
+
+            <li class="list-group-item"><a href="/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <ul class="list-group " id="tags">
+                </ul>
+            </li>
+
+
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2015 Kyle W. Purdon
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+
+
+</body>
+</html>

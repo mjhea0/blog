@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>Why Are Developers Afraid of 1.0.0? - Technology by Kyle W. Purdon</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="/why-are-developers-afraid-of-100.html">
+
+        <meta name="author" content="Kyle W. Purdon" />
+        <meta name="keywords" content="development,SemVer,version" />
+        <meta name="description" content="Developers should release v1.0.0 as soon as possible. Let me explain why." />
+
+        <meta property="og:site_name" content="Technology by Kyle W. Purdon" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Why Are Developers Afraid of 1.0.0?"/>
+        <meta property="og:url" content="/why-are-developers-afraid-of-100.html"/>
+        <meta property="og:description" content="Developers should release v1.0.0 as soon as possible. Let me explain why."/>
+        <meta property="article:published_time" content="2014-11-11" />
+            <meta property="article:section" content="Software" />
+            <meta property="article:tag" content="development" />
+            <meta property="article:tag" content="SemVer" />
+            <meta property="article:tag" content="version" />
+            <meta property="article:author" content="Kyle W. Purdon" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/theme/css/pygments/native.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+Technology by Kyle W. Purdon            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="/why-are-developers-afraid-of-100.html"
+                       rel="bookmark"
+                       title="Permalink to Why Are Developers Afraid of 1.0.0?">
+                        Why Are Developers Afraid of 1.0.0?
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2014-11-11T20:53:00-07:00"> Tue 11 November 2014</time>
+    </span>
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="/tag/development.html">development</a>
+        /
+	<a href="/tag/semver.html">SemVer</a>
+        /
+	<a href="/tag/version.html">version</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>I'm a big fan of releasing version 1.0.0 as soon as I possibly can. Let me tell you why I think this is the responsible thing to do as an open source software developer.</p>
+<h1>What does v0.#.# mean?</h1>
+<p>I recently stumbled across the <a href="http://SemVer.org/">Semantic Visioning (SemVer)</a> definition of pre-1.0.0:</p>
+<blockquote>
+<p>Major version zero (0.y.z) is for initial development. Anything may change at any time. The public API should not be considered stable.</p>
+</blockquote>
+<p>Pretty simple. As long as something is v0.#.# anything goes. The developer can change anything, break everything, and anybody using the tool at this point is at the mercy of the developer.</p>
+<h1>What does v1.#.# mean?</h1>
+<p>According to SemVer v1.#.#+</p>
+<blockquote>
+<p>Version 1.0.0 defines the public API. The way in which the version number is incremented after this release is dependent on this public API and how it changes.</p>
+</blockquote>
+<p>This basally means that any subsequent changes in version mean something. I wont repeat the SemVer specification here but just point out that after a release of v1.0.0 any changes not following the SemVer spec should be considered a failure on the part of the developer.</p>
+<h1>When Do I Release v1.0.0?</h1>
+<h2>AS SOON AS I POSSIBLY CAN.</h2>
+<p><img alt="The Flash" src="/images/the-flash.gif" /></p>
+<p>At the point in any of my projects where I have a working, tested, usable product that solves the issue I set out to solve I release v1.0.0. By doing this I'm telling users that I will not break this code without an increment to the appropriate version numbers. This should allow them to use my software in a manor that allows me to push usable bug fixes and minor improvements without breaking there dependent software.</p>
+<h1>Shouldn't I be Afraid of v1.0.0 Failing?</h1>
+<h2>NO!</h2>
+<p><img alt="Treadmill Fail" src="/images/treadmill-fail.gif" /></p>
+<p>Sure it might hurt and I might look silly but that's fine. I can release all the patch versions (1.0.#) that I need to do the fixes. All v1.0.0 says is that I guarantee as a developer that patch, minor, and major versions mean something.</p>
+<h1>An Example</h1>
+<p>Lets say there exists two Python modules (Foo and Bar).</p>
+<p>Foo has released version 1.0.0
+Bar has released version 0.1.0</p>
+<p>I'm writing a new Python modules called Baz that uses both Foo and Bar. My requirements file will look like this:</p>
+<div class="highlight"><pre><span class="n">Foo</span> <span class="o">&gt;=</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">0</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">2</span>
+<span class="n">Bar</span> <span class="o">==</span> <span class="mf">0.1</span><span class="o">.</span><span class="mi">0</span>
+</pre></div>
+
+
+<p>That's right Bar I don't trust you! And why should I? According to SemVer your version of 0.1.0 tells me that you are ready and willing to rip everything out from under me. So, no I wont take your new version 0.2.0 because it could, by definition, break everything I have worked so hard for in Baz.</p>
+<p>On the other side Foo I will let you upgrade all the way until you release 2.0.0. That's right! A bug fix in 1.0.1, a new minor feature in 1.1.1, I'll take it! You, Foo, have committed to releasing stable changes and for that I commend you.</p>
+<h1>Conclusion</h1>
+<p>v1.0.0 does not mean anything other than you, the developer, are committing to stable, SemVer compatible releases. So why not get there as fast as you can and leave your users with a little peace of mind?</p>
+<p><a href="https://github.com/dominictarr/semver-ftw/issues/2">More To Chew On</a></p>
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+              <ul class="list-group" id="social">
+                <li class="list-group-item"><a href="https://twitter.com/PurdonKyle"><i class="fa fa-twitter-square fa-lg"></i> Twitter</a></li>
+                <li class="list-group-item"><a href="https://github.com/kpurdon"><i class="fa fa-github-square fa-lg"></i> Github</a></li>
+                <li class="list-group-item"><a href="https://plus.google.com/u/0/+KylePurdon"><i class="fa fa-google-plus-square fa-lg"></i> Google+</a></li>
+                <li class="list-group-item"><a href="http://www.reddit.com/user/kpurdon/"><i class="fa fa-reddit-square fa-lg"></i> Reddit</a></li>
+                <li class="list-group-item"><a href="https://www.linkedin.com/in/kylepurdon"><i class="fa fa-linkedin-square fa-lg"></i> LinkedIn</a></li>
+              </ul>
+            </li>
+
+
+
+            <li class="list-group-item"><a href="/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <ul class="list-group " id="tags">
+                </ul>
+            </li>
+
+
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2015 Kyle W. Purdon
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+
+
+</body>
+</html>
