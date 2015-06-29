@@ -3,13 +3,18 @@
 from __future__ import unicode_literals
 
 AUTHOR = u'Kyle W. Purdon'
-SITENAME = u'Technology by {0}'.format(AUTHOR)
+SITENAME = u'A Technology Blog by {0}'.format(AUTHOR)
 SITEURL = 'http://kylepurdon.com/blog'
 
+MENUITEMS = (('Home', 'http://kylepurdon.com'),)
+
 DISPLAY_CATEGORIES_ON_MENU = False
+DISPLAY_TAGS_ON_SIDEBAR = False
+DISPLAY_CATEGORIES_ON_SIDEBAR = True
 
 THEME = 'pelican-bootstrap3'
 BOOTSTRAP_THEME = 'flatly'
+USE_PAGER = True
 
 PATH = 'content'
 STATIC_PATHS = ['images']

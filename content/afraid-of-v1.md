@@ -1,6 +1,6 @@
 Title: Why Are Developers Afraid of 1.0.0?
 Date: 2014-11-11 20:53
-Category: Software
+Category: Discussion
 Tags: development, SemVer, version
 Summary: Developers should release v1.0.0 as soon as possible. Let me explain why.
 
