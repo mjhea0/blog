@@ -62,7 +62,7 @@ def preview():
     local('pelican -s publishconf.py')
 
 
-def gh_pages():
+def deploy():
     """Publish to GitHub Pages"""
     rebuild()
     local("ghp-import -b {github_pages_branch} {deploy_path}".format(**env))
