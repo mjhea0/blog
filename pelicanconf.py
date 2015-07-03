@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 AUTHOR = u'Kyle W. Purdon'
-# SITENAME = u''
+SITENAME = u'Kyle W. Purdon'
 SITEURL = 'http://kylepurdon.com/blog'
 
 MENUITEMS = (('Home', 'http://kylepurdon.com'),
@@ -17,9 +17,14 @@ DISPLAY_CATEGORIES_ON_SIDEBAR = True
 THEME = 'pelican-bootstrap3'
 BOOTSTRAP_THEME = 'flatly'
 USE_PAGER = True
+CUSTOM_CSS = 'css/custom.css'
 
 PATH = 'content'
-STATIC_PATHS = ['images']
+STATIC_PATHS = ['images', 'css/custom.css']
+
+EXTRA_PATH_METADATA = {
+    'css/custom.css': {'path': 'static/custom.css'}
+}
 
 TIMEZONE = 'America/Denver'
 
