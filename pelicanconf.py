@@ -3,11 +3,12 @@
 from __future__ import unicode_literals
 
 AUTHOR = u'Kyle W. Purdon'
-SITENAME = u'{0}\'s Blog'.format(AUTHOR)
+SITENAME = u''
 SITEURL = 'http://kylepurdon.com/blog'
 
 MENUITEMS = (('Home', 'http://kylepurdon.com'),
-             ('About', 'http://kylepurdon.com/about.html'),)
+             ('Blog', 'http://kylepurdon.com/blog'),
+             ('About', 'http://kylepurdon.com/about.html'))
 
 DISPLAY_CATEGORIES_ON_MENU = False
 DISPLAY_TAGS_ON_SIDEBAR = False
