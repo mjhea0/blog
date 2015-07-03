@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 AUTHOR = u'Kyle W. Purdon'
-SITENAME = u''
+# SITENAME = u''
 SITEURL = 'http://kylepurdon.com/blog'
 
 MENUITEMS = (('Home', 'http://kylepurdon.com'),
