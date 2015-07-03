@@ -15,7 +15,6 @@ DISPLAY_CATEGORIES_ON_SIDEBAR = True
 
 THEME = 'pelican-bootstrap3'
 BOOTSTRAP_THEME = 'flatly'
-BOOTSTRAP_FLUID = True
 USE_PAGER = True
 
 PATH = 'content'
