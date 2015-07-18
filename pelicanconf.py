@@ -15,7 +15,7 @@ DISPLAY_CATEGORIES_ON_MENU = False
 DISPLAY_TAGS_ON_SIDEBAR = False
 DISPLAY_CATEGORIES_ON_SIDEBAR = True
 
-THEME = 'pelican-bootstrap3'
+THEME = '../pelican-bootstrap3'
 BOOTSTRAP_THEME = 'flatly'
 USE_PAGER = True
 
