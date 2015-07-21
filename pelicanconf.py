@@ -19,6 +19,8 @@ THEME = '../pelican-bootstrap3'
 BOOTSTRAP_THEME = 'flatly'
 USE_PAGER = True
 
+GOOGLE_ANALYTICS = 'UA-56650422-2'
+
 PATH = 'content'
 STATIC_PATHS = ['images']
 
