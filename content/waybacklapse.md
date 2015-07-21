@@ -4,6 +4,8 @@ Category: Software
 Tags: python, development, timelapse, waybackmachine
 Summary: Waybacklapse is a Wayback Machine time-lapse generator!
 
+**Update July 19, 2015** A follow up post [Waybacklapse 2.0](http://kylepurdon.com/blog/waybacklapse-20-a-python-wayback-machine-time-lapse-creator-now-with-python3-and-docker.html) has been posted.
+
 
 The [Wayback Machine](https://archive.org/web/) from the Internet Archive is a tool that allows you to view "captures" of websites from a specific time in the past. I have used this tool many times usually driven by curiosity and nostalgia for web design of the past. Recently I found myself wanting to view a timelapse of Wayback Machine images. I assumed there was something out there that would easily let me do this but to my surprise there was not!
 
