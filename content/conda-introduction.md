@@ -304,4 +304,4 @@ This will create two environments, one with Python3 and the other with Python2. 
 
 # Conclusion
 
-I hope this will get new users up and running with conda as a replacement for virtualenv and pyenv. If this post was helpful and you want more (diving deeper into conda) let me know on [twitter]().
+I hope this will get new users up and running with conda as a replacement for virtualenv and pyenv. If this post was helpful and you want more (diving deeper into conda) let me know on [twitter](https://twitter.com/PurdonKyle/status/625392730890309632).
