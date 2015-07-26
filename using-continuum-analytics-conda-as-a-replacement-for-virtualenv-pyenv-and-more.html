@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>Using Continuum Analytics Conda as a replacement for virtualenv, pyenv, and more! - Kyle W. Purdon</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="http://kylepurdon.com/blog/using-continuum-analytics-conda-as-a-replacement-for-virtualenv-pyenv-and-more.html">
+
+        <meta name="author" content="Kyle W. Purdon" />
+        <meta name="keywords" content="python,development,conda" />
+        <meta name="description" content="Continuum Analytics Conda can be used as a replacement for virtualenv, pyenv, and more. This post will show you how to adopt conda for the basics of python development." />
+
+        <meta property="og:site_name" content="Kyle W. Purdon" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Using Continuum Analytics Conda as a replacement for virtualenv, pyenv, and more!"/>
+        <meta property="og:url" content="http://kylepurdon.com/blog/using-continuum-analytics-conda-as-a-replacement-for-virtualenv-pyenv-and-more.html"/>
+        <meta property="og:description" content="Continuum Analytics Conda can be used as a replacement for virtualenv, pyenv, and more. This post will show you how to adopt conda for the basics of python development."/>
+        <meta property="article:published_time" content="2015-07-26" />
+            <meta property="article:section" content="Software, Tools" />
+            <meta property="article:tag" content="python" />
+            <meta property="article:tag" content="development" />
+            <meta property="article:tag" content="conda" />
+            <meta property="article:author" content="Kyle W. Purdon" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="http://kylepurdon.com/blog/theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="http://kylepurdon.com/blog/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="http://kylepurdon.com/blog/theme/css/pygments/native.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://kylepurdon.com/blog/theme/css/style.css" type="text/css"/>
+
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://kylepurdon.com/blog/" class="navbar-brand">
+            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                    <li><a href="http://kylepurdon.com">Home</a></li>
+                    <li><a href="http://kylepurdon.com/blog">Blog</a></li>
+                    <li><a href="http://kylepurdon.com/about.html">About</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://kylepurdon.com/blog/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://kylepurdon.com/blog/using-continuum-analytics-conda-as-a-replacement-for-virtualenv-pyenv-and-more.html"
+                       rel="bookmark"
+                       title="Permalink to Using Continuum Analytics Conda as a replacement for virtualenv, pyenv, and more!">
+                        Using Continuum Analytics Conda as a replacement for virtualenv, pyenv, and more!
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-07-26T11:30:00-06:00"> Sun 26 July 2015</time>
+    </span>
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://kylepurdon.com/blog/tag/python.html">python</a>
+        /
+	<a href="http://kylepurdon.com/blog/tag/development.html">development</a>
+        /
+	<a href="http://kylepurdon.com/blog/tag/conda.html">conda</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>For the last year I have been using <a href="http://conda.pydata.org/docs/">conda</a> by <a href="http://continuum.io/">Continuum Analytics</a> as my primary python development toolkit. While conda provides much more than isolated environments (virtualenv), and switchable python versions (pyenv) those two features alone make it work the switch. This blog post will walk you (a new user) through the basic setup and use of <a href="http://conda.pydata.org/miniconda.html">miniconda</a> (a light-weight distribution of conda).</p>
+<p><img alt="continuum analytics" src="http://kylepurdon.com/blog/images/continuum-logo.png" />
+<img alt="anaconda" src="http://kylepurdon.com/blog/images/anaconda-logo.png" /></p>
+<h1>Introduction To Conda</h1>
+<p>First a few (fairly confusing terms):</p>
+<ul>
+<li><strong>Continuum Analytics:</strong> The company developing and distributing conda/miniconda/anaconda.</li>
+<li><strong>Conda:</strong> The command-line tool itself. (Like <em>pip</em> or <em>virtualenv</em>)</li>
+<li><strong>Miniconda:</strong> A minimal distribution of conda with nothing but the most basic features. (You should almost always start with an install of this)</li>
+<li><strong>Anaconda:</strong> A curated collection (by Continuum Analytics) of common packages for scientific python users. This goes on top of miniconda.</li>
+</ul>
+<p>Conda is normally marketed as much more than a simple replacement for the version of python on your system and isolated environments, and in reality it is! It's a completely new packaging system, package repository, and much more. However, at it's most basic level you can use it to manage the version of python you use and create isolated environments. You can even still use <code>pip</code> to install packages. <strong>This blog post will cover this basic level of use.</strong></p>
+<h1>Installation</h1>
+<p>For this guide we'll be installing the miniconda distribution. While conda is supported on all operating systems I'll be using OS X 10.10.3. You can find the official installation instructions <a href="http://conda.pydata.org/docs/install/quick.html#quick-install">here</a>.</p>
+<h3>Download Miniconda</h3>
+<p>Go <a href="http://conda.pydata.org/miniconda.html">here</a> and download the distribution for your operating system. You'll notice that there are both Python 2 and Python 3 versions. It actually does not matter which you get as conda treats Python itself as an install-able package so you can change the version at any time (more on this later). Choose whichever you want to be the default.</p>
+<div class="highlight"><pre>wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+</pre></div>
+
+
+<h3>Install Miniconda</h3>
+<p>Run the installer and follow the prompts.</p>
+<div class="highlight"><pre>bash Miniconda-latest-MacOSX-x86_64.sh
+</pre></div>
+
+
+<p><em>Note</em>: To run this install unattended you can use the <code>-b</code> option in the above command.</p>
+<p>The installer will ask you if it should automatically add conda to the system path. Unless you plan to manually do this yourself let the installer do it for you. <a href="https://github.com/kpurdon/dotfiles/blob/master/bash/env#L2">Here</a> is how I set up my PATH for conda.</p>
+<h1>Replacing Virtualenv</h1>
+<p>For those of you that are not familiar with <a href="https://virtualenv.pypa.io/en/latest/">virtualenv</a> it is a tool that allows you to create isolated environments with a set of packages installed from pip. The same functionality is available with the <code>conda create</code> and <code>conda env</code> command. For basic usage <em>conda create</em> is the command you want.</p>
+<h3>Create An Environment</h3>
+<p>Let's say we want an environment to start working on a flask application.</p>
+<ul>
+<li><code>conda create -n myflaskapp flask</code></li>
+</ul>
+<p>This command will create a new environment with the name <em>myflaskapp</em> and install the package <em>flask</em> in the environment.</p>
+<p><strong>Note</strong> that the <em>conda create</em> command requires that you give it the name of a package to install in the new environment. I really don't like this required argument, but a simple way to get around it is just to pass in <code>python</code> as the required package.</p>
+<ul>
+<li><code>conda create -n myflaskapp python</code></li>
+</ul>
+<p>After running the above command you will be given the following information:</p>
+<div class="highlight"><pre>#
+# To activate this environment, use:
+# $ source activate myflaskapp
+#
+# To deactivate this environment, use:
+# $ source deactivate
+#
+</pre></div>
+
+
+<p>After running the command <code>source activate myflaskapp</code> you can see the list of installed packages in the environment with the <code>conda list</code> command.</p>
+<div class="highlight"><pre>(myflaskapp) $ conda list
+# packages in environment at /Users/kpurdon/miniconda/envs/myflaskapp:
+#
+openssl                   1.0.1k                        1
+pip                       7.1.0                    py34_0
+python                    3.4.3                         0
+readline                  6.2                           2
+setuptools                18.0.1                   py34_0
+sqlite                    3.8.4.1                       1
+tk                        8.5.18                        0
+xz                        5.0.5                         0
+zlib                      1.2.8                         0
+</pre></div>
+
+
+<p>Notice the <em>py34_0</em> line on the right, these are the only python packages installed. The rest (python, readline, sqlite, tk, xz, and zlib) are non-python packages installed by conda. You can get a list of the python packages installed with <code>pip list</code>.</p>
+<div class="highlight"><pre>(myflaskapp) $ pip list
+pip (7.1.0)
+setuptools (18.0.1)
+</pre></div>
+
+
+<h3>Install Packages</h3>
+<p>Conda provides a complete alternative to <em>pip</em> and <em>pypi</em> packages, however you can still use <em>pip</em> just as you normally would. Let's continue our flask example and install the flask package using <em>pip</em> and then the <em>conda</em> alternative.</p>
+<ul>
+<li><code>pip install flask</code></li>
+</ul>
+<div class="highlight"><pre>(myflaskapp) $ conda list
+# packages in environment at /Users/kpurdon/miniconda/envs/myflaskapp:
+#
+flask                     0.10.1                    &lt;pip&gt;
+itsdangerous              0.24                      &lt;pip&gt;
+jinja2                    2.8                       &lt;pip&gt;
+markupsafe                0.23                      &lt;pip&gt;
+openssl                   1.0.1k                        1
+pip                       7.1.0                    py34_0
+python                    3.4.3                         0
+readline                  6.2                           2
+setuptools                18.0.1                   py34_0
+sqlite                    3.8.4.1                       1
+tk                        8.5.18                        0
+werkzeug                  0.10.4                    &lt;pip&gt;
+xz                        5.0.5                         0
+zlib                      1.2.8                         0
+</pre></div>
+
+
+<p>Notice that <em>conda list</em> shows the packages installed with pip by denoting <em>&lt;pip></em> in the right column. Running <code>pip list</code> will show these:</p>
+<div class="highlight"><pre>(myflaskapp) $ pip list
+Flask (0.10.1)
+itsdangerous (0.24)
+Jinja2 (2.8)
+MarkupSafe (0.23)
+pip (7.1.0)
+setuptools (18.0.1)
+Werkzeug (0.10.4)
+</pre></div>
+
+
+<p>Let's do the exact same thing using conda's alternative to <em>pip</em>, <code>conda install</code>. First let's remove the packages we just installed with <em>pip</em>.</p>
+<div class="highlight"><pre>(myflaskapp) $ pip uninstall flask itsdangerous Jinja2 MarkupSafe Werkzeug
+</pre></div>
+
+
+<p>Now we can install Flask with <code>conda install flask</code>.</p>
+<div class="highlight"><pre>(myflaskapp) $ conda list
+# packages in environment at /Users/kpurdon/miniconda/envs/myflaskapp:
+#
+flask                     0.10.1                   py34_1
+itsdangerous              0.24                     py34_0
+jinja2                    2.7.3                    py34_1
+markupsafe                0.23                     py34_0
+openssl                   1.0.1k                        1
+pip                       7.1.0                    py34_0
+python                    3.4.3                         0
+readline                  6.2                           2
+setuptools                18.0.1                   py34_0
+sqlite                    3.8.4.1                       1
+tk                        8.5.18                        0
+werkzeug                  0.10.4                   py34_0
+xz                        5.0.5                         0
+zlib                      1.2.8                         0
+</pre></div>
+
+
+<p>Notice now that flask and it's dependencies are shown just like pip and setuptools were <em>py34_0</em>. This means that instead of being installed from <em>pip</em> they were installed from <a href="http://anaconda.org/">anaconda.org</a> (formerly binstar.org). However, if you go to that site and search for <em>flask</em> you'll see a ton of results, which one did we get? We can use <code>conda config</code> to find out.</p>
+<p>Run the following command:</p>
+<ul>
+<li><code>conda config --set show_channel_urls yes</code></li>
+</ul>
+<p>This will create/update a file in your home directory called <em>.condarc</em>. If this was the first time you set any config it will look like this:</p>
+<div class="highlight"><pre><span class="nv">$ </span>cat ~/.condarc
+show_channel_urls: yes
+</pre></div>
+
+
+<p>Now run <code>conda list</code>:</p>
+<div class="highlight"><pre>(myflaskapp) $ conda list
+# packages in environment at /Users/kpurdon/miniconda/envs/myflaskapp:
+#
+flask                     0.10.1                   py34_1    defaults
+itsdangerous              0.24                     py34_0    defaults
+jinja2                    2.7.3                    py34_1    defaults
+markupsafe                0.23                     py34_0    defaults
+openssl                   1.0.1k                        1    http://repo.continuum.io/pkgs/free/osx-64/openssl-1.0.1k-1.tar.bz2
+pip                       7.1.0                    py34_0    defaults
+python                    3.4.3                         0    defaults
+readline                  6.2                           2    &lt;unknown&gt;
+setuptools                18.0.1                   py34_0    defaults
+sqlite                    3.8.4.1                       1    http://repo.continuum.io/pkgs/free/osx-64/sqlite-3.8.4.1-1.tar.bz2
+tk                        8.5.18                        0    http://repo.continuum.io/pkgs/free/osx-64/tk-8.5.18-0.tar.bz2
+werkzeug                  0.10.4                   py34_0    defaults
+xz                        5.0.5                         0    defaults
+zlib                      1.2.8                         0    &lt;unknown&gt;
+</pre></div>
+
+
+<p>We have a new column on the right that lists the <strong>channel</strong> that the package came from. <code>defaults</code> is one of the official Continuum Analytics channels.</p>
+<h3>pip install v. conda install</h3>
+<p>Now that we know that we can use both <em>pip</em> and <em>conda install</em> why/when should we use one over the other?</p>
+<h4>pip install</h4>
+<p><em>Pro</em></p>
+<ul>
+<li>Standard selection of Python packages.</li>
+<li>Most (if not all) packages are published here first.</li>
+<li>Most up-to-date releases.</li>
+</ul>
+<p><em>Con</em></p>
+<ul>
+<li>Scientific Python (numpy, scipy, ...) take longer to install (and are often troublesome)</li>
+</ul>
+<h4>conda install</h4>
+<p><em>Pro</em></p>
+<ul>
+<li>Best integration with conda.</li>
+<li>Scientific Python (numpy, scipy, ...) are much easier/faster to install.</li>
+</ul>
+<p><em>Con</em></p>
+<ul>
+<li>Often packages are not as up to date as pip</li>
+<li>Often packages on pip are not available on anaconda.org.</li>
+</ul>
+<h3>Creating Requirements Files</h3>
+<p>A <strong>requirements.txt</strong> file is a standard way to store a list of versioned requirements from a virtualenv. Conda has an equivalent file called and <strong>environment.yaml</strong>. We can create both from a conda environment.</p>
+<p>Given the following conda environment:</p>
+<div class="highlight"><pre>(myflaskapp) $ conda list
+# packages in environment at /Users/kpurdon/miniconda/envs/myflaskapp:
+#
+flask                     0.10.1                   py34_1    defaults
+itsdangerous              0.24                     py34_0    defaults
+jinja2                    2.7.3                    py34_1    defaults
+markupsafe                0.23                     py34_0    defaults
+openssl                   1.0.1k                        1    http://repo.continuum.io/pkgs/free/osx-64/openssl-1.0.1k-1.tar.bz2
+pip                       7.1.0                    py34_0    defaults
+python                    3.4.3                         0    defaults
+readline                  6.2                           2    &lt;unknown&gt;
+setuptools                18.0.1                   py34_0    defaults
+sqlite                    3.8.4.1                       1    http://repo.continuum.io/pkgs/free/osx-64/sqlite-3.8.4.1-1.tar.bz2
+tk                        8.5.18                        0    http://repo.continuum.io/pkgs/free/osx-64/tk-8.5.18-0.tar.bz2
+werkzeug                  0.10.4                   py34_0    defaults
+xz                        5.0.5                         0    defaults
+zlib                      1.2.8                         0    &lt;unknown&gt;
+</pre></div>
+
+
+<p>We can create a <em>requirements.txt</em> <code>pip list &gt; requirements.txt</code>.</p>
+<div class="highlight"><pre>Flask (0.10.1)
+itsdangerous (0.24)
+Jinja2 (2.7.3)
+MarkupSafe (0.23)
+pip (7.1.0)
+setuptools (18.0.1)
+Werkzeug (0.10.4)
+</pre></div>
+
+
+<p>and an <em>environment.yaml</em> <code>conda env export &gt; environment.yaml</code>.</p>
+<div class="highlight"><pre><span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">myflaskapp</span>
+<span class="l-Scalar-Plain">dependencies</span><span class="p-Indicator">:</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">flask=0.10.1=py34_1</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">itsdangerous=0.24=py34_0</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">jinja2=2.7.3=py34_1</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">markupsafe=0.23=py34_0</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">openssl=1.0.1k=1</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">pip=7.1.0=py34_0</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">python=3.4.3=0</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">readline=6.2=2</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">setuptools=18.0.1=py34_0</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">sqlite=3.8.4.1=1</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">tk=8.5.18=0</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">werkzeug=0.10.4=py34_0</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">xz=5.0.5=0</span>
+<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">zlib=1.2.8=0</span>
+</pre></div>
+
+
+<h1>Replacing pyenv</h1>
+<p>For those of you that are unfamiliar with <a href="https://github.com/yyuu/pyenv">pyenv</a> it is a tool that allows you to install and switch between multiple versions of Python on a single system. We can do the same thing using <em>conda environments</em>. The following is how I use conda to manage Python versions.</p>
+<h3>Create Environments</h3>
+<div class="highlight"><pre><span class="nv">$ </span>conda create -n py3 <span class="nv">python</span><span class="o">=</span>3*
+<span class="nv">$ </span>conda create -n py2 <span class="nv">python</span><span class="o">=</span>2*
+</pre></div>
+
+
+<p>This will create two environments, one with Python3 and the other with Python2. I typically set one of these as my default by adding <code>source activate py3</code> to my terminal startup. Typically I only use these "named python" environments to run a Python REPL or do general Python tasks. I'll create another conda environment named specifically for each real project I work on.</p>
+<h1>Conclusion</h1>
+<p>I hope this will get new users up and running with conda as a replacement for virtualenv and pyenv. If this post was helpful and you want more (diving deeper into conda) let me know on <a href="">twitter</a>.</p>
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+              <ul class="list-group" id="social">
+                <li class="list-group-item"><a href="https://twitter.com/PurdonKyle"><i class="fa fa-twitter-square fa-lg"></i> Twitter</a></li>
+                <li class="list-group-item"><a href="https://github.com/kpurdon"><i class="fa fa-github-square fa-lg"></i> Github</a></li>
+                <li class="list-group-item"><a href="https://plus.google.com/u/0/+KylePurdon"><i class="fa fa-google-plus-square fa-lg"></i> Google+</a></li>
+                <li class="list-group-item"><a href="http://www.reddit.com/user/kpurdon/"><i class="fa fa-reddit-square fa-lg"></i> Reddit</a></li>
+                <li class="list-group-item"><a href="https://www.linkedin.com/in/kylepurdon"><i class="fa fa-linkedin-square fa-lg"></i> LinkedIn</a></li>
+              </ul>
+            </li>
+
+
+            <li class="list-group-item"><a href="http://kylepurdon.com/blog/"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Categories</span></h4></a>
+                <ul class="list-group" id="categories">
+                    <li class="list-group-item">
+                        <a href="http://kylepurdon.com/blog/category/demo.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Demo
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://kylepurdon.com/blog/category/discussion.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Discussion
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://kylepurdon.com/blog/category/software.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Software
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://kylepurdon.com/blog/category/software-tools.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Software, Tools
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2015 Kyle W. Purdon
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="http://kylepurdon.com/blog/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="http://kylepurdon.com/blog/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="http://kylepurdon.com/blog/theme/js/respond.min.js"></script>
+
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-56650422-2']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    <!-- End Google Analytics Code -->
+
+</body>
+</html>
