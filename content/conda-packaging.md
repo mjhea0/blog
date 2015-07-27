@@ -542,4 +542,4 @@ $ python test.py
 
 # Conclusion
 
-I hope that this post will help new users, and current users grasp the basics of conda packaging.  If this post was helpful and you want more (diving deeper into conda) let me know on [twitter]().
+I hope that this post will help new users, and current users grasp the basics of conda packaging.  If this post was helpful and you want more (diving deeper into conda) let me know on [twitter](https://twitter.com/PurdonKyle/status/625781622126698496).
