@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>Packaging Python Basics with Continuum Analytics Conda. - Kyle W. Purdon</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="http://kylepurdon.com/blog/packaging-python-basics-with-continuum-analytics-conda.html">
+
+        <meta name="author" content="Kyle W. Purdon" />
+        <meta name="keywords" content="python,development,conda" />
+        <meta name="description" content="Continuum Analytics Conda can be used as a replacement for virtualenv, pyenv, and more. This post will dive into the &#34;more&#34; and show you how to build packages from scratch and from existing python projects." />
+
+        <meta property="og:site_name" content="Kyle W. Purdon" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Packaging Python Basics with Continuum Analytics Conda."/>
+        <meta property="og:url" content="http://kylepurdon.com/blog/packaging-python-basics-with-continuum-analytics-conda.html"/>
+        <meta property="og:description" content="Continuum Analytics Conda can be used as a replacement for virtualenv, pyenv, and more. This post will dive into the &#34;more&#34; and show you how to build packages from scratch and from existing python projects."/>
+        <meta property="article:published_time" content="2015-07-26" />
+            <meta property="article:section" content="Software, Tools" />
+            <meta property="article:tag" content="python" />
+            <meta property="article:tag" content="development" />
+            <meta property="article:tag" content="conda" />
+            <meta property="article:author" content="Kyle W. Purdon" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="http://kylepurdon.com/blog/theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="http://kylepurdon.com/blog/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="http://kylepurdon.com/blog/theme/css/pygments/native.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://kylepurdon.com/blog/theme/css/style.css" type="text/css"/>
+
+
+
+
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://kylepurdon.com/blog/" class="navbar-brand">
+            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                    <li><a href="http://kylepurdon.com">Home</a></li>
+                    <li><a href="http://kylepurdon.com/blog">Blog</a></li>
+                    <li><a href="http://kylepurdon.com/about.html">About</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://kylepurdon.com/blog/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://kylepurdon.com/blog/packaging-python-basics-with-continuum-analytics-conda.html"
+                       rel="bookmark"
+                       title="Permalink to Packaging Python Basics with Continuum Analytics Conda.">
+                        Packaging Python Basics with Continuum Analytics Conda.
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-07-26T11:30:00-06:00"> Sun 26 July 2015</time>
+    </span>
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://kylepurdon.com/blog/tag/python.html">python</a>
+        /
+	<a href="http://kylepurdon.com/blog/tag/development.html">development</a>
+        /
+	<a href="http://kylepurdon.com/blog/tag/conda.html">conda</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p><img alt="continuum analytics" src="http://kylepurdon.com/blog/images/continuum-logo.png" />
+<img alt="anaconda" src="http://kylepurdon.com/blog/images/anaconda-logo.png" /></p>
+<p>After my <a href="http://kylepurdon.com/blog/using-continuum-analytics-conda-as-a-replacement-for-virtualenv-pyenv-and-more.html">recent post</a> on conda basics I got a request on <a href="https://www.reddit.com/r/Python/comments/3ep2ae/using_continuum_analytics_conda_as_a_replacement/">reddit</a>.</p>
+<p>I posted:</p>
+<blockquote>
+<p>2. Is the author willing to package on anaconda.org (if yes: help, then conda install)</p>
+<p>3. Does the author care if I put it on anaconda.org (if not: conda skeleton from pypi and then conda install)</p>
+</blockquote>
+<p>And got this <a href="https://www.reddit.com/r/Python/comments/3ep2ae/using_continuum_analytics_conda_as_a_replacement/cthvzl9">response</a> from <a href="https://www.reddit.com/user/Ogi010">/u/Ogi010</a>:</p>
+<blockquote>
+<p>Is there a guide for step 2 or 3 out there? I would love to help packages be available on the conda environment, and I want to be a good citizen about it, but I don't want to get in the way...</p>
+</blockquote>
+<p>What I found, other than the <a href="http://conda.pydata.org/docs/build_tutorials.html">official docs</a> was a fairly sparse set of <a href="https://www.google.com/search?q=conda+packaging&amp;oq=conda+&amp;aqs=chrome.0.69i59j69i60l2j69i59j69i60l2.1252j0j4&amp;sourceid=chrome&amp;es_sm=119&amp;ie=UTF-8">google results</a> on the topic.</p>
+<p>What I want to accomplish with this blog post is to get a new conda user to the point that they can:</p>
+<ol>
+<li>Build a simple conda package from scratch.</li>
+<li>Convert an existing python package to conda.</li>
+<li>Take a package from pypi and put it on anaconda.org.</li>
+</ol>
+<h1>What is a conda package?</h1>
+<blockquote>
+<p>A conda package is a package that can be installed using the conda install [packagename] command.</p>
+<p>It includes a link to a tarball or bzipped tar archive (.tar.bz2) which contains metadata under the info/ directory, and a collection of files which are installed directly into an install prefix.</p>
+<p>The format is identical across platforms and operating systems. During the install process, files are extracted into the install prefix, except for files in the info/ directory. Installing the files of a conda package into an environment can be thought of as changing the directory to an environment, then downloading and extracting the zip file and its dependencies – all with the single conda install [packagename] command.</p>
+<p>-- <a href="http://conda.pydata.org/docs/build_tutorials/pkgs2.html#what-is-a-conda-package">Continuum Analytics Docs</a></p>
+</blockquote>
+<h1>Example Project</h1>
+<p>For all of the following tutorials we'll be using the same example project. It's a simple tool that given a string "YYYYMMDD" it will return the day of the year. We'll be able to both run the tool from the command line, and from other python code by importing it. Let's look at the bare Python project without any conda specific configuration.</p>
+<div class="highlight"><pre>dtools/
+├── conversion
+│   ├── __init__.py
+│   ├── cli.py
+│   ├── convert.py
+│   └── tests
+│       └── test_convert.py
+├── setup.py
+└── tasks.py
+└── .flake8rc
+</pre></div>
+
+
+<p>This directory defines a project <em>dtools</em>, a package <em>conversion</em>, and two modules <em>cli.py</em> and <em>convert.py</em>. In addition it includes the standard python package descriptor file <em>setup.py</em>, and an <a href="https://github.com/pyinvoke/invoke">invoke</a> tasks file <em>tasks.py</em>.</p>
+<p>The actual source is VERY simple:</p>
+<p><em>convert.py</em></p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
+
+
+<span class="k">def</span> <span class="nf">yyyymmdd_to_doy</span><span class="p">(</span><span class="n">yyyymmdd</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a yyyymmdd (str) to a day-of-year (str)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">yyyymmdd_dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">yyyymmdd</span><span class="p">,</span> <span class="s">&#39;%Y%m</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">yyyymmdd_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%j&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p><em>cli.py</em></p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">pkg_resources</span>
+
+<span class="kn">import</span> <span class="nn">click</span>
+
+<span class="kn">from</span> <span class="nn">conversion</span> <span class="kn">import</span> <span class="n">convert</span>
+
+
+<span class="k">def</span> <span class="nf">print_version</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="ow">or</span> <span class="n">ctx</span><span class="o">.</span><span class="n">resilient_parsing</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="s">&#39;dtools&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">version</span>
+    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+
+<span class="nd">@click.command</span><span class="p">()</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;-v&#39;</span><span class="p">,</span> <span class="s">&#39;--version&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+              <span class="n">callback</span><span class="o">=</span><span class="n">print_version</span><span class="p">,</span> <span class="n">expose_value</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+              <span class="n">is_eager</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="nd">@click.help_option</span><span class="p">(</span><span class="s">&#39;-h&#39;</span><span class="p">,</span> <span class="s">&#39;--help&#39;</span><span class="p">)</span>
+<span class="nd">@click.argument</span><span class="p">(</span><span class="s">&#39;yyyymmdd&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">yyyymmdd</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a given YYYYMMDD to DOY.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">doy</span> <span class="o">=</span> <span class="n">convert</span><span class="o">.</span><span class="n">yyyymmdd_to_doy</span><span class="p">(</span><span class="n">yyyymmdd</span><span class="p">)</span>
+    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">doy</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+
+<p><em>setup.py</em></p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">setuptools</span> <span class="kn">import</span> <span class="n">setup</span><span class="p">,</span> <span class="n">find_packages</span>
+
+<span class="n">setup</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">&#39;dtools&#39;</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="s">&#39;0.0.1&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s">&#39;Date Tools&#39;</span><span class="p">,</span>
+    <span class="n">url</span><span class="o">=</span><span class="s">&#39;https://github.com/kpurdon/dtools&#39;</span><span class="p">,</span>
+    <span class="n">author</span><span class="o">=</span><span class="s">&#39;Kyle W. Purdon&#39;</span><span class="p">,</span>
+    <span class="n">author_email</span><span class="o">=</span><span class="s">&#39;kylepurdon@gmail.com&#39;</span><span class="p">,</span>
+    <span class="n">license</span><span class="o">=</span><span class="s">&#39;GPLv3+&#39;</span><span class="p">,</span>
+    <span class="n">classifiers</span><span class="o">=</span><span class="p">[</span>
+        <span class="s">&#39;Development Status :: 1 - Planning&#39;</span>
+        <span class="s">&#39;Intended Audience :: Developers&#39;</span><span class="p">,</span>
+        <span class="s">&#39;Topic :: Utilities&#39;</span><span class="p">,</span>
+        <span class="s">&#39;License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)&#39;</span>
+        <span class="s">&#39;Programming Language :: Python :: 2&#39;</span><span class="p">,</span>
+        <span class="s">&#39;Programming Language :: Python :: 3&#39;</span>
+    <span class="p">],</span>
+    <span class="n">packages</span><span class="o">=</span><span class="n">find_packages</span><span class="p">()</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p><em>tasks.py</em></p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">invoke</span> <span class="kn">import</span> <span class="n">task</span><span class="p">,</span> <span class="n">run</span>
+
+
+<span class="nd">@task</span>
+<span class="k">def</span> <span class="nf">clean</span><span class="p">():</span>
+    <span class="n">run</span><span class="p">(</span><span class="s">&#39;find . -name &quot;*.pyc&quot; -type f -delete&#39;</span><span class="p">)</span>
+    <span class="n">run</span><span class="p">(</span><span class="s">&#39;find . -name &quot;__pycache__&quot; -type d -delete&#39;</span><span class="p">)</span>
+
+
+<span class="nd">@task</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+    <span class="n">run</span><span class="p">(</span><span class="s">&#39;flake8 . -v --config=.flake8rc&#39;</span><span class="p">)</span>
+    <span class="n">run</span><span class="p">(</span><span class="s">&#39;nosetests --verbose&#39;</span><span class="p">)</span>
+
+
+<span class="nd">@task</span><span class="p">(</span><span class="n">pre</span><span class="o">=</span><span class="p">[</span><span class="n">test</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">build</span><span class="p">():</span>
+    <span class="n">run</span><span class="p">(</span><span class="s">&#39;python setup.py install&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h1>Packaging A Project</h1>
+<p>Amazingly to turn this project into a conda package we only need to add a single file, the <em>meta.yaml</em>.</p>
+<div class="highlight"><pre><span class="n">package</span><span class="p">:</span>
+  <span class="n">name</span><span class="p">:</span> <span class="n">dtools</span>
+  <span class="n">version</span><span class="p">:</span> <span class="s">&quot;0.0.1&quot;</span>
+
+<span class="n">source</span><span class="p">:</span>
+  <span class="n">path</span><span class="p">:</span> <span class="o">.</span>
+
+<span class="n">build</span><span class="p">:</span>
+  <span class="n">script</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="s">&quot;*.pyc&quot;</span> <span class="o">-</span><span class="nb">type</span> <span class="n">f</span> <span class="o">-</span><span class="n">delete</span>
+    <span class="o">-</span> <span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="s">&quot;__pycache__&quot;</span> <span class="o">-</span><span class="nb">type</span> <span class="n">d</span> <span class="o">-</span><span class="n">delete</span>
+    <span class="o">-</span> <span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+  <span class="n">entry_points</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">yyyymmdd2doy</span> <span class="o">=</span> <span class="n">conversion</span><span class="o">.</span><span class="n">cli</span><span class="p">:</span><span class="n">main</span>
+
+<span class="n">requirements</span><span class="p">:</span>
+  <span class="n">build</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">python</span>
+    <span class="o">-</span> <span class="n">setuptools</span>
+    <span class="o">-</span> <span class="n">nose</span>
+    <span class="o">-</span> <span class="n">flake8</span>
+    <span class="o">-</span> <span class="n">click</span>
+  <span class="n">run</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">python</span>
+    <span class="o">-</span> <span class="n">click</span>
+
+<span class="n">test</span><span class="p">:</span>
+  <span class="n">imports</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">conversion</span>
+  <span class="n">commands</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">yyyymmdd2doy</span> <span class="o">-</span><span class="n">v</span>
+    <span class="o">-</span> <span class="n">yyyymmdd2doy</span> <span class="o">--</span><span class="n">version</span>
+    <span class="o">-</span> <span class="n">yyyymmdd2doy</span> <span class="o">-</span><span class="n">h</span>
+    <span class="o">-</span> <span class="n">yyyymmdd2doy</span> <span class="o">--</span><span class="n">help</span>
+
+<span class="n">about</span><span class="p">:</span>
+  <span class="n">home</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">kpurdon</span><span class="o">/</span><span class="n">dtools</span>
+  <span class="n">license</span><span class="p">:</span> <span class="n">GPLv3</span><span class="o">+</span>
+</pre></div>
+
+
+<p>I think the best way to explain how conda packaging works is to work through this file section by section. For more detailed information (and all available options) you should read through the <a href="http://conda.pydata.org/docs/building/meta-yaml.html">official documentation</a>.</p>
+<h3>package</h3>
+<div class="highlight"><pre><span class="l-Scalar-Plain">package</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">dtools</span>
+  <span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="s">&quot;0.0.1&quot;</span>
+</pre></div>
+
+
+<p>This section describes the basic information about the package including it's name and version. This is actually the only required information for a meta.yaml.</p>
+<h3>source</h3>
+<div class="highlight"><pre><span class="l-Scalar-Plain">source</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">path</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">.</span>
+</pre></div>
+
+
+<p>This section tells conda where to get the source from. In this case we are just building from the local directory, but you can specify a version controlled repo and conda will automatically download the source.</p>
+<h3>build</h3>
+<div class="highlight"><pre><span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">script</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">flake8 . -v --config=.flake8rc</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">nosetests --verbose</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">python setup.py install</span>
+  <span class="l-Scalar-Plain">entry_points</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">yyyymmdd2doy = conversion.cli:main</span>
+</pre></div>
+
+
+<p>This section is the meat of building a python package. Here we are defining the following build process:</p>
+<ul>
+<li>Run <a href="https://pypi.python.org/pypi/flake8">flake8</a> to check the syntax for pep8 compatibility. (optional, but I recommend it)</li>
+<li>Run <a href="https://nose.readthedocs.org/en/latest/">nosetests</a> to run any unittests defined in the project.</li>
+<li>Run install on the <em>setup.py</em>.</li>
+</ul>
+<p>We are also defining an entry_point (a command that can be run directly from the command-line after install). The format of an entry_point is <code>command = package.module:function</code>.</p>
+<h3>requirements</h3>
+<div class="highlight"><pre><span class="l-Scalar-Plain">requirements</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">python</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">setuptools</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">nose</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">flake8</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">click</span>
+  <span class="l-Scalar-Plain">run</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">python</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">click</span>
+</pre></div>
+
+
+<p>This section defines the build and runtime requirements for our package.</p>
+<h3>test</h3>
+<div class="highlight"><pre><span class="l-Scalar-Plain">test</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">imports</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">conversion</span>
+  <span class="l-Scalar-Plain">commands</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">yyyymmdd2doy -v</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">yyyymmdd2doy --version</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">yyyymmdd2doy -h</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">yyyymmdd2doy --help</span>
+</pre></div>
+
+
+<p>This section defines post-install tests that we can run during the <code>conda build</code> process. Conda installs the built package in a temporary environment during the build process and then will run any tests defined in this section.</p>
+<h3>about</h3>
+<div class="highlight"><pre><span class="l-Scalar-Plain">about</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">home</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://github.com/kpurdon/dtools</span>
+  <span class="l-Scalar-Plain">license</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">GPLv3+</span>
+</pre></div>
+
+
+<p>This is a "metadata" section that is optional.</p>
+<h1>Converting an Existing Package</h1>
+<p>Notice in the test section of the <em>meta.yaml</em> we are duplicating logic that we already have in our file <em>tasks.py</em>. Ideally we could add a new task called <em>build</em> and then change the section from:</p>
+<div class="highlight"><pre><span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">script</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">flake8 . -v --config=.flake8rc</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">nosetests --verbose</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">python setup.py install</span>
+</pre></div>
+
+
+<p>to the following:</p>
+<div class="highlight"><pre><span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">script</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">invoke build</span>
+</pre></div>
+
+
+<p>The build task:</p>
+<div class="highlight"><pre><span class="nd">@task</span><span class="p">(</span><span class="n">pre</span><span class="o">=</span><span class="p">[</span><span class="n">test</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">build</span><span class="p">():</span>
+    <span class="n">run</span><span class="p">(</span><span class="s">&#39;python setup.py install&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>This would require us to add <em>invoke</em> to our build requirements:</p>
+<div class="highlight"><pre><span class="l-Scalar-Plain">requirements</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">...</span>
+    <span class="l-Scalar-Plain">- invoke</span>
+    <span class="l-Scalar-Plain">...</span>
+</pre></div>
+
+
+<p>However, after adding this and running <code>conda build .</code> from the root of the project we get the following error:</p>
+<p><code>Error: No packages found in current osx-64 channels matching: invoke</code></p>
+<p>This means that none of the channels on <a href="http://anaconda.org/">anaconda.org</a> that are included by default contain the package <em>invoke</em>. If we search for <a href="http://anaconda.org/search?q=access%3Apublic+type%3Aconda+invoke">invoke on anaconda.org</a> we see the following results:</p>
+<p><img alt="anaconda.org invoke results" src="http://kylepurdon.com/blog/images/anaconda-invoke-results.png" /></p>
+<p>None of these results are from official channels and therefore I would not recommend using them as there is no guarantee they will be correct, and/or exist tomorrow. We have a few options now:</p>
+<ol>
+<li>Ask the authors of invoke to package and distribute on conda.</li>
+<li>Add invoke to the <a href="https://github.com/conda/conda-recipes">conda-recipes</a> repo. (An official conda channel).</li>
+<li>Create our own conda package from the current invoke package on pypi.</li>
+</ol>
+<p>In this case I'm fairly certain option 1 is not going to happen as the authors never packaged fabric for conda, and fabric is already included in the conda-recipes repo. This makes option 2 a good option, so lets start with that!</p>
+<h3>Contribute Invoke Recipe</h3>
+<p>For those of you that have never contributed to an open-source project you might want to take a look at <a href="https://guides.github.com/activities/contributing-to-open-source/">this guide</a>. Here is what we are going to do:</p>
+<ol>
+<li>Fork the <a href="https://github.com/conda/conda-recipes">conda-recipes</a> repo.</li>
+<li>Add a new recipe for invoke.</li>
+<li>Create a pull-request to submit the recipe back to the original repo.</li>
+</ol>
+<p>After forking the repo on github I run the follwing commands to add a recipe for invoke:</p>
+<div class="highlight"><pre><span class="nv">$ </span>git clone git@github.com:kpurdon/conda-recipes.git
+<span class="nv">$ </span><span class="nb">cd </span>conda-recipes
+<span class="nv">$ </span>conda skeleton pypi invoke
+<span class="nv">$ </span>git add invoke/
+<span class="nv">$ </span>git commit -m <span class="s1">&#39;add skeleton invoke recipe&#39;</span>
+<span class="nv">$ </span>git push
+</pre></div>
+
+
+<p>Before we submit a pull-request we'll want to confirm that we can build and install from the recipe that was generated by the <code>conda skeleton</code> command. <em>conda skeleton</em> gives us the following directory:</p>
+<div class="highlight"><pre>invoke/
+├── bld.bat
+├── build.sh
+└── meta.yaml
+</pre></div>
+
+
+<p>The <em>bld.bat</em> and <em>build.sh</em> files both just contain <code>python setup.py install</code> so the <em>meta.yaml</em> is all we need to look at.</p>
+<p><em>metal.yaml</em></p>
+<div class="highlight"><pre><span class="l-Scalar-Plain">package</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">invoke</span>
+  <span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="s">&quot;0.10.1&quot;</span>
+
+<span class="l-Scalar-Plain">source</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">fn</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">invoke-0.10.1.tar.gz</span>
+  <span class="l-Scalar-Plain">url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://pypi.python.org/packages/source/i/invoke/invoke-0.10.1.tar.gz</span>
+  <span class="l-Scalar-Plain">md5</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">68b5858e2d03e2df00c35d3ae843b45e</span>
+
+<span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">entry_points</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">invoke = invoke.cli:main</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">inv = invoke.cli:main</span>
+
+<span class="l-Scalar-Plain">requirements</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">python</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">setuptools</span>
+  <span class="l-Scalar-Plain">run</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">python</span>
+
+<span class="l-Scalar-Plain">test</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">imports</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">invoke</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">invoke.parser</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">invoke.vendor</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">invoke.vendor.fluidity</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">invoke.vendor.lexicon</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">invoke.vendor.yaml2</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">invoke.vendor.yaml3</span>
+  <span class="l-Scalar-Plain">commands</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">invoke --help</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">inv --help</span>
+
+<span class="l-Scalar-Plain">about</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">home</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http://docs.pyinvoke.org</span>
+  <span class="l-Scalar-Plain">license</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">BSD License</span>
+  <span class="l-Scalar-Plain">summary</span><span class="p-Indicator">:</span> <span class="s">&#39;Pythonic</span><span class="nv"> </span><span class="s">task</span><span class="nv"> </span><span class="s">execution&#39;</span>
+</pre></div>
+
+
+<p>We can now run the following command to test the build: <code>conda build invoke</code>. From the default skeleton we'll get this error:</p>
+<p><code>ImportError: No module named 'error'</code></p>
+<p>As it turns out there is (I think) a small bug with relative imports in the <strong>invoke.vendor.yaml2</strong> package. For now we can just comment out that line in the <em>meta.yaml</em> imports section and get a successful build. After the build succeeds we'll get the following message:</p>
+<div class="highlight"><pre># If you want to upload this package to binstar.org later, type:
+#
+# $ binstar upload /Users/kpurdon/miniconda/conda-bld/osx-64/invoke-0.10.1-py34_0.tar.bz2
+</pre></div>
+
+
+<p>This is the point when we could upload this package to our own channel on <em>anacona.org</em>. I'll cover how to do this shortly, but for now we need to install this package locally and test that it works. To do that I run the following command:</p>
+<p><code>conda install /Users/kpurdon/miniconda/conda-bld/osx-64/invoke-0.10.1-py34_0.tar.bz2</code></p>
+<p>After this I run a few basic tests (just running normal invoke commands on my own project) to confirm that it is working. After that confirmation the contribution is ready for a pull request back to <em>conda-recipes</em>. You can see the pull request I submitted <a href="https://github.com/conda/conda-recipes/pull/365">here</a>.</p>
+<p>At this point I want to continue with this tutorial and getting the invoke package officially out (from my pull request) might take a while. In the meantime I want to upload the package to my own channel on anaconda.org.</p>
+<h3>Upload Invoke to Your Channel</h3>
+<p>This section will cover the original (option 3) posed in the introduction:</p>
+<blockquote>
+<p>3. Does the author care if I put it on anaconda.org (if not: conda skeleton from pypi and then conda install)</p>
+</blockquote>
+<p>As long as the license allows redistribution you can upload whatever you want to anaconda.org. For this the process is very similar to a contribution to the <em>conda-recipes</em> repository. To create a package on my user channel (kpurdon) for invoke I ran the following commands:</p>
+<div class="highlight"><pre><span class="nv">$ </span>conda skeleton pypi invoke
+<span class="nv">$ </span>conda build invoke
+</pre></div>
+
+
+<p>I then get the following:</p>
+<div class="highlight"><pre># If you want to upload this package to binstar.org later, type:
+#
+# $ binstar upload /Users/kpurdon/miniconda/conda-bld/osx-64/invoke-0.10.1-py34_0.tar.bz2
+</pre></div>
+
+
+<p>At this point I could run the command shown, and have the osx-64 version on binstar. However I want to upload a version for all operating systems (it's just good practice). For that I run the following commands:</p>
+<div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd</span> /Users/kpurdon/miniconda/conda-bld/
+<span class="nv">$ </span>conda convert osx-64/invoke-0.10.1-py34_0.tar.bz2 -p all
+<span class="nv">$ </span>binstar upload */invoke-0.10.1-py34_0.tar.bz2
+</pre></div>
+
+
+<p>After running this command we can perform the same search for invoke on anaconda.org we did earlier and we now get the following results:</p>
+<p><img alt="anaconda.org invoke results kpurdon" src="http://kylepurdon.com/blog/images/anaconda-invoke-results-kpurdon.png" /></p>
+<p>Notice now that my channel (kpurdon) contains the <em>invoke 0.10.1</em> package for all operating systems. We can now install the kpurdon version of invoke with the following command:</p>
+<p><code>$ conda install -c kpurdon invoke</code></p>
+<p>Now we can continue packaging our project!</p>
+<h1>Packaging A Project (cont...)</h1>
+<p>Remember that we were trying to add <em>invoke</em> as a requirement in our <em>meta.yaml</em> so that we didn't duplicate build logic we were already defining in our <em>tasks.py</em>.</p>
+<div class="highlight"><pre><span class="l-Scalar-Plain">requirements</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">...</span>
+    <span class="l-Scalar-Plain">- invoke</span>
+    <span class="l-Scalar-Plain">...</span>
+</pre></div>
+
+
+<p>However, after adding this and running <code>conda build .</code> from the root of the project we got the following error:</p>
+<p><code>Error: No packages found in current osx-64 channels matching: invoke</code></p>
+<p>Again, this means that no package called invoke is available in any of the default channels. However in the previous section we created the invoke package and uploaded it to the (kpurdon) channel. In order for our <em>meta.yaml</em> to pick up invoke from <code>-c kpurdon</code> we need to set up our conda configuration by running:</p>
+<p><code>conda config --add channels kpurdon</code></p>
+<p>Now we can run <code>conda build .</code> and we will not get the above error about invoke not working, instead we get:</p>
+<p><strong>Success!</strong></p>
+<div class="highlight"><pre># If you want to upload this package to binstar.org later, type:
+#
+# $ binstar upload /Users/kpurdon/miniconda/conda-bld/osx-64/dtools-0.0.1-py34_0.tar.bz2
+#
+# To have conda build upload to binstar automatically, use
+# $ conda config --set binstar_upload yes
+</pre></div>
+
+
+<p>Instead of uploading to binstar let's just install it locally:</p>
+<p><code>conda install /Users/kpurdon/miniconda/conda-bld/osx-64/dtools-0.0.1-py34_0.tar.bz2</code></p>
+<p>Then we can run the command to test everything works:</p>
+<div class="highlight"><pre><span class="nv">$ </span>yyyymmdd2doy --version
+0.0.1
+</pre></div>
+
+
+<div class="highlight"><pre><span class="nv">$ </span>yyyymmdd2doy --help
+Usage: yyyymmdd2doy <span class="o">[</span>OPTIONS<span class="o">]</span> YYYYMMDD
+
+  Converts a given YYYYMMDD to DOY.
+
+Options:
+  -v, --version
+  -h, --help     Show this message and exit.
+</pre></div>
+
+
+<div class="highlight"><pre><span class="nv">$ </span>yyyymmdd2doy 20110101
+001
+</pre></div>
+
+
+<p>We can also use this from a file:</p>
+<p><em>test.py</em></p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">conversion</span> <span class="kn">import</span> <span class="n">convert</span>
+
+<span class="n">doy</span> <span class="o">=</span> <span class="n">convert</span><span class="o">.</span><span class="n">yyyymmdd_to_doy</span><span class="p">(</span><span class="s">&#39;20110101&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">doy</span><span class="p">)</span>
+</pre></div>
+
+
+<p>And we get the follwing results:</p>
+<div class="highlight"><pre><span class="nv">$ </span>python test.py
+001
+</pre></div>
+
+
+<h1>Conclusion</h1>
+<p>I hope that this post will help new users, and current users grasp the basics of conda packaging.  If this post was helpful and you want more (diving deeper into conda) let me know on <a href="">twitter</a>.</p>
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+              <ul class="list-group" id="social">
+                <li class="list-group-item"><a href="https://twitter.com/PurdonKyle"><i class="fa fa-twitter-square fa-lg"></i> Twitter</a></li>
+                <li class="list-group-item"><a href="https://github.com/kpurdon"><i class="fa fa-github-square fa-lg"></i> Github</a></li>
+                <li class="list-group-item"><a href="https://plus.google.com/u/0/+KylePurdon"><i class="fa fa-google-plus-square fa-lg"></i> Google+</a></li>
+                <li class="list-group-item"><a href="http://www.reddit.com/user/kpurdon/"><i class="fa fa-reddit-square fa-lg"></i> Reddit</a></li>
+                <li class="list-group-item"><a href="https://www.linkedin.com/in/kylepurdon"><i class="fa fa-linkedin-square fa-lg"></i> LinkedIn</a></li>
+              </ul>
+            </li>
+
+
+            <li class="list-group-item"><a href="http://kylepurdon.com/blog/"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Categories</span></h4></a>
+                <ul class="list-group" id="categories">
+                    <li class="list-group-item">
+                        <a href="http://kylepurdon.com/blog/category/demo.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Demo
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://kylepurdon.com/blog/category/discussion.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Discussion
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://kylepurdon.com/blog/category/software.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Software
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://kylepurdon.com/blog/category/software-tools.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Software, Tools
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2015 Kyle W. Purdon
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="http://kylepurdon.com/blog/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="http://kylepurdon.com/blog/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="http://kylepurdon.com/blog/theme/js/respond.min.js"></script>
+
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-56650422-2']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    <!-- End Google Analytics Code -->
+
+</body>
+</html>
