@@ -417,7 +417,7 @@ As it turns out there is (I think) a small bug with relative imports in the **in
 # $ binstar upload /Users/kpurdon/miniconda/conda-bld/osx-64/invoke-0.10.1-py34_0.tar.bz2
 ```
 
-This is the point when we could upload this package to our own channel on *anacona.org*. I'll cover how to do this shortly, but for now we need to install this package locally and test that it works. To do that I run the following command:
+This is the point when we could upload this package to our own channel on *anaconda.org*. I'll cover how to do this shortly, but for now we need to install this package locally and test that it works. To do that I run the following command:
 
 `conda install /Users/kpurdon/miniconda/conda-bld/osx-64/invoke-0.10.1-py34_0.tar.bz2`
 
