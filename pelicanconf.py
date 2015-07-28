@@ -17,7 +17,7 @@ DISPLAY_CATEGORIES_ON_SIDEBAR = True
 
 THEME = '../pelican-bootstrap3'
 BOOTSTRAP_THEME = 'cerulean'
-PYGMENTS_STYLE = 'default'
+PYGMENTS_STYLE = 'friendly'
 USE_PAGER = True
 
 GOOGLE_ANALYTICS = 'UA-56650422-2'
