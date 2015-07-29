@@ -25,9 +25,9 @@ $ pip list | grep invoke  # ignore this for now, it's a special surprise for lat
 invoke (0.10.1)
 ```
 
-# Command Line Example
+# Command-Line Example
 
-The command line tool that we are creating will have the following interface:
+The command-line utility that we are creating will have the following interface:
 
 `python [file].py [command] [options] NAME`
 
@@ -55,13 +55,13 @@ $ python [file].py hello --greeting=Wazzup --caps Kyle
 WAZZUP, KYLE!
 ```
 
-This simple command line tool breaks down into a few things the library we choose will need to implement:
+This simple command-line utility breaks down into a few things the library we choose will need to implement:
 
 1. Commands (hello, goodbye)
 2. Arguments (name)
 3. Flags/Options (--greeting, --caps)
 
-In addition automated help messages are important, and to throw a wrench in lets say we also want a `-v/--version` option that will print the version number and quit. As you would expect argparse, docopt, and click implement all of these features (as any simple command line library would). This means that this comparison is mostly going to break down into a stylistic preference. I'll leave my personal preferences for the end!
+In addition automated help messages are important, and to throw a wrench in lets say we also want a `-v/--version` option that will print the version number and quit. As you would expect argparse, docopt, and click implement all of these features (as any simple command-line library would). This means that this comparison is mostly going to break down into a stylistic preference. I'll leave my personal preferences for the end!
 
 I've been curious about using task-runner libraries like [fabric](https://fabric.readthedocs.org/en/latest/) and it's python3 replacement [invoke](https://invoke.readthedocs.org/en/latest/) to create simple command-line interfaces so at the end (after comparing argparse, docopt, and click) I will try and put the same interface together with invoke.
 
@@ -193,11 +193,11 @@ Options:
   --help  Show this message and exit.
 ```
 
-Even at this point you can see that we have very different approaches to constructing a basic command line tool. Next let's add the *NAME* argument, and the logic to print the result to each tool.
+Even at this point you can see that we have very different approaches to constructing a basic command-line utility. Next let's add the *NAME* argument, and the logic to print the result to each tool.
 
 # Arguments
 
-In this section I will be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Arguments (a.k.a positional arguments) are required inputs to a command line tool. In this case we are adding a required "name" argument so that the tool can greet a specific person.
+In this section I will be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Arguments (a.k.a positional arguments) are required inputs to a command-line utility. In this case we are adding a required "name" argument so that the tool can greet a specific person.
 
 ### Argparse
 
@@ -338,7 +338,7 @@ Options:
 
 # Flags/Options
 
-In this section I will again be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Options are non-required inputs that can be given to alter the execution of a command-line tool. Flags are a subset of options that are True/False. For example: `--foo=bar` will pass *bar* as the value for the *foo* option, `--baz` (if defined as a flag) will pass the value of True is the option is given, or False if not.
+In this section I will again be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Options are non-required inputs that can be given to alter the execution of a command-line utility. Flags are a subset of options that are True/False. For example: `--foo=bar` will pass *bar* as the value for the *foo* option, `--baz` (if defined as a flag) will pass the value of True is the option is given, or False if not.
 
 For this example we are going to add the `--greeting=[greeting]` option, and the `--caps` flag. The *greeting* option will have default values of "Hello" and "Goodbye" (for hello, and goodbye commands) and allow the user to pass in a custom greeting. For example given `--greeting=Wazzup` the tool will respond with *Wazzup, [name]!*. The `--caps` flag will uppercase the entire response if given. For example given `--caps` the tool will respond with *HELLO, [NAME]!*.
 
@@ -781,7 +781,7 @@ Options:
 
 # Invoke
 
-Can we use [invoke](https://invoke.readthedocs.org/en/latest/) a simple task running library to build the greeter command line tool? Let's find out!
+Can we use [invoke](https://invoke.readthedocs.org/en/latest/) a simple task running library to build the greeter command-line utility? Let's find out!
 
 To start let's begin with the simplest version of the greeter:
 
@@ -1109,7 +1109,7 @@ Now, to get this out of the way my personal go-to library is click. I have been 
 
 ### arparse
 
-**Arparse is the standard library (included with Python) for creating command-line tools.** For that fact alone it is arguably the most used of the tools examined here. Argparse is also very simple to use as lots of *magic* (implicit work that happens behind the scenes) is used to construct the interface. For example both arguments and options are defined using the `add_arguments` method, argparse figures our which is which behind the scenes.
+**Arparse is the standard library (included with Python) for creating command-line utilities.** For that fact alone it is arguably the most used of the tools examined here. Argparse is also very simple to use as lots of *magic* (implicit work that happens behind the scenes) is used to construct the interface. For example both arguments and options are defined using the `add_arguments` method, argparse figures our which is which behind the scenes.
 
 ### docopt
 
@@ -1121,4 +1121,4 @@ I've already said that I really like click and have been using it in production 
 
 ### invoke
 
-**Invoke surprised me in this comparison.** I thought that a library designed for task execution might not be able to easily match full command line libraries but it did! That being said I would not recommend using it for this type of work as you will certainly run into limitations for anything more complex than the example presented here.
+**Invoke surprised me in this comparison.** I thought that a library designed for task execution might not be able to easily match full command-line libraries but it did! That being said I would not recommend using it for this type of work as you will certainly run into limitations for anything more complex than the example presented here.
