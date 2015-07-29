@@ -45,7 +45,7 @@ This simple command line tool breaks down into a few things the library we choos
 
 In addition automated help messages are important, and to throw a wrench in lets say we also want a `-v/--version` option that will print the version number and quit. As you would expect argparse, docopt, and click implement all of these features (as any simple command line library would). This means that this comparison is mostly going to break down into a stylistic preference. I'll leave my personal preferences for the end!
 
-In addition I've been curious about using task-runner libraries like [fabric]() and it's python3 replacement [invoke]() to create simple command-line interfaces so at the end (after comparing argparse, docopt, and click) I will try and put the same interface together with invoke.
+I've been curious about using task-runner libraries like [fabric](https://fabric.readthedocs.org/en/latest/) and it's python3 replacement [invoke](https://invoke.readthedocs.org/en/latest/) to create simple command-line interfaces so at the end (after comparing argparse, docopt, and click) I will try and put the same interface together with invoke.
 
 # Commands
 
@@ -281,7 +281,7 @@ Note that the help message is not specific to the subcommand, rather it is the e
 
 ### Click
 
-In order to add an argument to a click command we simply use the `@click.argument` decorator. In this case we are just passing the argument name, but there are [many more options](http://click.pocoo.org/4/arguments/) some of which we'll use later. With click command/subcommand dispatching is native. Since we are just decorating the logic (function) with the argument we dont need to do anything to set/dispatch to the correct logic.
+In order to add an argument to a click command we simply use the `@click.argument` decorator. In this case we are just passing the argument name, but there are [many more options](http://click.pocoo.org/4/arguments/) some of which we'll use later. With click command/subcommand dispatching is native. Since we are just decorating the logic (function) with the argument we don't need to do anything to set/dispatch to the correct logic.
 
 ```python
 import click
@@ -563,57 +563,544 @@ $ python click/options.py hello --caps Kyle
 HELLO, KYLE!
 ```
 
-# Version Option (-v/--version)
+# Version Option (--version)
+
+In this section I'll be showing how to add a `--version` argument to each of our tools. For simplicity we'll just hardcode the version number to *1.0.0*. In a production application you will want to pull this from the installed application. One way I have done this (there are many options) is with this simple process:
+
+```python
+>>> import pkg_resources
+>>> pkg_resources.get_distribution("click").version  # replace click with the name of your tool
+>>> '4.1'
+```
+
+A second option for determining the version would be to have automated version-bumping software change the version number defined in the file when a new version is released. This is possible with [bumpversion](https://pypi.python.org/pypi/bumpversion) but I would not recommend the approach as it's easy to get out of sync. Generally it's best practice to keep a version number in as few places as possible.
+
+Since the implementation of adding a hard-coded version option is fairly simple I will use the `...` to denote skipped sections of the code from the last section.
 
 ### Argparse
 
+For argparse we again need to use the `add_argument` method, this time with the `action='version'` parameter and a value for `version` passed in. We apply this method to the root parser (instead of the *hello* or *goodbye* subparsers).
+
 ```python
+...
+parser = argparse.ArgumentParser()
+parser.add_argument('--version', action='version', version='1.0.0')
+...
 ```
 
 ```bash
+$ python argparse/version.py --version
+1.0.0
 ```
 
 ### Docopt
 
+In order to add `--version` to docopt we add it as an option to our primary docstring. In addition we add the `version` parameter to our first call to docopt (parsing the primary docstring).
+
 ```python
+"""usage: greet [--help] <command> [<args>...]
+
+options:
+  -h --help         Show this screen.
+  --version         Show the version.
+
+commands:
+   hello       Say hello
+   goodbye     Say goodbye
+
+"""
+
+from docopt import docopt
+
+...
+
+if __name__ == '__main__':
+    arguments = docopt(__doc__, options_first=True, version='1.0.0')
+    ...
 ```
 
 ```bash
+$ python docopt/version.py --version
+1.0.0
 ```
 
 ### Click
 
-```python
+Click provides us with a convince in the `@click.version_option` decorator. To add this we decorate our greet function (main `@click.group` function).
 
+```python
+...
+@click.group()
+@click.version_option(version='1.0.0')
+def greet():
+    ...
 ```
 
 ```bash
+$ python click/version.py --version
+version.py, version 1.0.0
 ```
-
 
 # Improving Help (-h/--help)
 
+The final step to completing our application is to improve the help documentation for each of the tools. We'll want to make sure that we can access help with both `-h` and `--help` and that each *argument* and *option* has some level of description.
+
+### Argparse
+
+By default argparse provides us with both `-h` and `--help` so we don't need to add anything for that. However our current help documentation for the subcommands is lacking information on what `--caps` and `--greeting` do and what the `name` argument is.
+
+```bash
+$ python argparse/version.py hello -h
+usage: version.py hello [-h] [--greeting GREETING] [--caps] name
+
+positional arguments:
+  name
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --greeting GREETING
+  --caps
+```
+
+In order to add more information we use the `help` parameter of the `add_argument` method.
+
+```python
+...
+
+hello_parser = subparsers.add_parser('hello')
+hello_parser.add_argument('name', help='name of the person to greet')
+hello_parser.add_argument('--greeting', default='Hello', help='word to use for the greeting')
+hello_parser.add_argument('--caps', action='store_true', help='uppercase the output')
+hello_parser.set_defaults(func=greet)
+
+goodbye_parser = subparsers.add_parser('goodbye')
+goodbye_parser.add_argument('name', help='name of the person to greet')
+goodbye_parser.add_argument('--greeting', default='Hello', help='word to use for the greeting')
+goodbye_parser.add_argument('--caps', action='store_true', help='uppercase the output')
+
+...
+```
+
+Now when we provide the help flag we get a much more complete result:
+
+```bash
+$ python argparse/help.py hello -h
+usage: help.py hello [-h] [--greeting GREETING] [--caps] name
+
+positional arguments:
+  name                 name of the person to greet
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --greeting GREETING  word to use for the greeting
+  --caps               uppercase the output
+```
+
+### Docopt
+
+This section is where docopt gets it's chance to shine. Because we wrote the documentation as the definition of the command-line interface itself we already have a complete help. In addition `-h` and `--help` are already provided.
+
+```bash
+$ python docopt/help.py hello -h
+usage: basic.py hello [options] [--] [<name>]
+
+  -h --help         Show this screen.
+  --caps            Uppercase the output.
+  --greeting=<str>  Greeting to use [default: Hello].
+```
+
+### Click
+
+Adding help documentation in click is very similar to argparse. We need to add the `help` parameter to all of our `@click.option` decorators.
+
+```python
+...
+
+@greet.command()
+@click.argument('name')
+@click.option('--greeting', default='Hello', help='word to use for the greeting')
+@click.option('--caps', is_flag=True, help='uppercase the output')
+def hello(**kwargs):
+    greeter(**kwargs)
+
+
+@greet.command()
+@click.argument('name')
+@click.option('--greeting', default='Goodbye', help='word to use for the greeting')
+@click.option('--caps', is_flag=True, help='uppercase the output')
+def goodbye(**kwargs):
+    greeter(**kwargs)
+
+...
+```
+
+However, click **DOES NOT** provide us `-h` by default. We need to use the `context_settings` parameter to override the default `help_option_names`.
+
+```python
+import click
+
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
+...
+
+@click.group(context_settings=CONTEXT_SETTINGS)
+@click.version_option(version='1.0.0')
+def greet():
+    pass
+```
+
+Now the click help documentation is complete.
+
+```bash
+$ python click/help.py hello -h
+Usage: help.py hello [OPTIONS] NAME
+
+Options:
+  --greeting TEXT  word to use for the greeting
+  --caps           uppercase the output
+  -h, --help       Show this message and exit.
+```
+
+# Invoke
+
+Can we use [invoke](https://invoke.readthedocs.org/en/latest/) a simple task running library to build the greeter command line tool? Let's find out!
+
+To start let's begin with the simplest version of the greeter:
+
+*tasks.py*
+```python
+from invoke import task
+
+
+@task
+def hello(name):
+    print('Hello, {0}!'. format(name))
+
+
+@task
+def goodbye(name):
+    print('Goodbye, {0}!'.format(name))
+```
+
+With this very simple file we get a two tasks, and a very minimal help. From the same directory as *tasks.py* we get the following results:
+
+```bash
+$ invoke -l
+Available tasks:
+
+  goodbye
+  hello
+
+$ invoke hello Kyle
+Hello, Kyle!
+
+$ invoke goodbye Kyle
+Goodbye, Kyle!
+```
+
+Now let's add in our options/flags `--greeting` and `--caps`. In addition we can pull out the greet logic into it's own function just as we did with the other tools.
+
+```python
+from invoke import task
+
+
+def greet(name, greeting, caps):
+    output = '{0}, {1}!'.format(greeting, name)
+    if caps:
+        output = output.upper()
+    print(output)
+
+
+@task
+def hello(name, greeting='Hello', caps=False):
+    greet(name, greeting, caps)
+
+
+@task
+def goodbye(name, greeting='Goodbye', caps=False):
+    greet(name, greeting, caps)
+```
+
+Now we actually have the complete interface we designated in the beginning!
+
+```bash
+$ invoke hello Kyle
+Hello, Kyle!
+
+$ invoke hello --greeting=Wazzup Kyle
+Wazzup, Kyle!
+
+$ invoke hello --greeting=Wazzup --caps Kyle
+WAZZUP, KYLE!
+
+$ invoke hello --caps Kyle
+HELLO, KYLE!
+```
+
+### Help Documentation
+
+In order to compete with argparse, docopt, and click we'll also need to be able to add complete help documentation. Luckily this is also available in *invoke* by using the `help` parameter of the `@task` decorator and adding docstrings to the decorated functions.
+
+```python
+...
+
+HELP = {
+    'name': 'name of the person to greet',
+    'greeting': 'word to use for the greeting',
+    'caps': 'uppercase the output'
+}
+
+
+@task(help=HELP)
+def hello(name, greeting='Hello', caps=False):
+    """
+    Say hello.
+    """
+    greet(name, greeting, caps)
+
+
+@task(help=HELP)
+def goodbye(name, greeting='Goodbye', caps=False):
+    """
+    Say goodbye.
+    """
+    greet(name, greeting, caps)
+
+```
+
+### Version Option
+
+Implementing a `--version` option is not quite as simple and comes with a caveat. The basics are that we've added a `version=False` option to each of the tasks that calls a new `print_version` function if True. In order to make this work we cannot have any positional arguments without defaults or we get:
+
+```bash
+$ invoke hello --version
+'hello' did not receive all required positional arguments!
+```
+
+Also note that we are calling `--version` on our commands *hello* and *goodbye* because *invoke* itself has a version command:
+
+```bash
+$ invoke --version
+Invoke 0.10.1
+```
+
+The completed implementation of a version command follows:
+
+```python
+...
+
+def print_version():
+    print('1.0.0')
+    exit(0)
+
+
+@task(help=HELP)
+def hello(name='', greeting='Hello', caps=False, version=False):
+    """
+    Say hello.
+    """
+    if version:
+        print_version()
+    greet(name, greeting, caps)
+
+...
+```
+
+Now we are able to ask invoke for the version of our tool:
+
+```bash
+$ invoke hello --version
+1.0.0
+```
+
+# Conclusion
+
+To review let's take a look at the final version of each of the tools we created.
+
 ### Argparse
 
 ```python
-```
+import argparse
 
-```bash
+
+def greet(args):
+    output = '{0}, {1}!'.format(args.greeting, args.name)
+    if args.caps:
+        output = output.upper()
+    print(output)
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--version', action='version', version='1.0.0')
+subparsers = parser.add_subparsers()
+
+hello_parser = subparsers.add_parser('hello')
+hello_parser.add_argument('name', help='name of the person to greet')
+hello_parser.add_argument('--greeting', default='Hello', help='word to use for the greeting')
+hello_parser.add_argument('--caps', action='store_true', help='uppercase the output')
+hello_parser.set_defaults(func=greet)
+
+goodbye_parser = subparsers.add_parser('goodbye')
+goodbye_parser.add_argument('name', help='name of the person to greet')
+goodbye_parser.add_argument('--greeting', default='Hello', help='word to use for the greeting')
+goodbye_parser.add_argument('--caps', action='store_true', help='uppercase the output')
+goodbye_parser.set_defaults(func=greet)
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+    args.func(args)
 ```
 
 ### Docopt
 
 ```python
-```
+"""usage: greet [--help] <command> [<args>...]
 
-```bash
+options:
+  -h --help         Show this screen.
+  --version         Show the version.
+
+commands:
+   hello       Say hello
+   goodbye     Say goodbye
+
+"""
+
+from docopt import docopt
+
+HELLO = """usage: basic.py hello [options] [--] [<name>]
+
+  -h --help         Show this screen.
+  --caps            Uppercase the output.
+  --greeting=<str>  Greeting to use [default: Hello].
+"""
+
+GOODBYE = """usage: basic.py goodbye [options] [--] [<name>]
+
+  -h --help         Show this screen.
+  --caps            Uppercase the output.
+  --greeting=<str>  Greeting to use [default: Goodbye].
+"""
+
+
+def greet(args):
+    output = '{0}, {1}!'.format(args['--greeting'],
+                                args['<name>'])
+    if args['--caps']:
+        output = output.upper()
+    print(output)
+
+
+if __name__ == '__main__':
+    arguments = docopt(__doc__, options_first=True, version='1.0.0')
+
+    if arguments['<command>'] == 'hello':
+        greet(docopt(HELLO))
+    elif arguments['<command>'] == 'goodbye':
+        greet(docopt(GOODBYE))
+    else:
+        exit("{0} is not a command. See 'options.py --help'.".format(arguments['<command>']))
 ```
 
 ### Click
 
 ```python
+import click
 
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
+
+def greeter(**kwargs):
+    output = '{0}, {1}!'.format(kwargs['greeting'],
+                                kwargs['name'])
+    if kwargs['caps']:
+        output = output.upper()
+    print(output)
+
+
+@click.group(context_settings=CONTEXT_SETTINGS)
+@click.version_option(version='1.0.0')
+def greet():
+    pass
+
+
+@greet.command()
+@click.argument('name')
+@click.option('--greeting', default='Hello', help='word to use for the greeting')
+@click.option('--caps', is_flag=True, help='uppercase the output')
+def hello(**kwargs):
+    greeter(**kwargs)
+
+
+@greet.command()
+@click.argument('name')
+@click.option('--greeting', default='Goodbye', help='word to use for the greeting')
+@click.option('--caps', is_flag=True, help='uppercase the output')
+def goodbye(**kwargs):
+    greeter(**kwargs)
+
+if __name__ == '__main__':
+    greet()
 ```
 
-```bash
+### Invoke
+
+```python
+from invoke import task
+
+
+def greet(name, greeting, caps):
+    output = '{0}, {1}!'.format(greeting, name)
+    if caps:
+        output = output.upper()
+    print(output)
+
+
+HELP = {
+    'name': 'name of the person to greet',
+    'greeting': 'word to use for the greeting',
+    'caps': 'uppercase the output'
+}
+
+
+def print_version():
+    print('1.0.0')
+    exit(0)
+
+
+@task(help=HELP)
+def hello(name='', greeting='Hello', caps=False, version=False):
+    """
+    Say hello.
+    """
+    if version:
+        print_version()
+    greet(name, greeting, caps)
+
+
+@task(help=HELP)
+def goodbye(name='', greeting='Goodbye', caps=False, version=False):
+    """
+    Say goodbye.
+    """
+    if version:
+        print_version()
+    greet(name, greeting, caps)
 ```
+
+Now, to get this out of the way my personal go-to library is click. I have been using it on large multi-command complex interfaces for the last year. (Credit goes to [@kwbeam](https://twitter.com/kwbeam) for introducing me to click). I prefer the decorator approach and think it lends a very clean, composable interface. That being said, let's evaluate each option.
+
+### arparse
+
+**Arparse is the standard library (included with Python) for creating command-line tools.** For that fact alone it is arguably the most used of the tools examined here. Argparse is also very simple to use as lots of *magic* (implicit work that happens behind the scenes) is used to construct the interface. For example both arguments and options are defined using the `add_arguments` method, argparse figures our which is which behind the scenes.
+
+### docopt
+
+**If you think writing documentation is great, docopt is for you!** In addition docopt has implementations for [many other languages](https://github.com/docopt) meaning you can learn one tool and use it across many languages. The downside of docopt is that it is very structured in the way you have to define your command-line interface. (Some might say this is a good thing!)
+
+### click
+
+I've already said that I really like click and have been using it in production for over a year. **I encourage you to read the very complete [Why Click?](http://click.pocoo.org/4/why/) documentation.** In fact that documentation is what inspired this blog post! The decorator style implementation of click is very simple to use and since you are decorating the function you want executed it makes it very easy to read the code and figure out what is going to be executed. In addition click supports advanced features like callbacks, command nesting, and more. Click is based on a fork of the now deprecated [optparse](https://docs.python.org/2/library/optparse.html) library.
+
+### invoke
+
+**Invoke surprised me in this comparison.** I thought that a library designed for task execution might not be able to easily match full command line libraries but it did! That being said I would not recommend using it for this type of work as you will certainly run into limitations for anything more complex than the example presented here.
