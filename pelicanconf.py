@@ -22,8 +22,14 @@ USE_PAGER = True
 
 GOOGLE_ANALYTICS = 'UA-56650422-2'
 
+CUSTOM_CSS = 'static/custom.css'
+
 PATH = 'content'
-STATIC_PATHS = ['images']
+STATIC_PATHS = ['images', 'extra/custom.css']
+
+EXTRA_PATH_METADATA = {
+    'extra/custom.css': {'path': 'static/custom.css'}
+}
 
 TIMEZONE = 'America/Denver'
 
