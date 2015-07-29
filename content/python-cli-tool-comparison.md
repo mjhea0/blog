@@ -1,11 +1,29 @@
-title: Comparing Python Command-Line Utility Libraries.
+title: Comparing Python Command-Line Utility Libraries
 date:
 category: Software, Tools
 tags: python, development
 summary: A comparison of Python command-line utility libraries (argparse, docopt, and click).
 status: draft
 
-Some Introduction Here.
+About a year ago I began a job where building libraries with command-line interfaces was a very common occurrence. At that time I had used [argparse](https://docs.python.org/3/library/argparse.html) quite a bit and wanted to explore what other options were available. I found that the most popular alternatives available were [click](http://click.pocoo.org/4/) and [docopt](http://docopt.org/). During my exploration I also found that other than each libraries "why use me" section there was not much available for a complete comparison of the three libraries. Now there is! If you want to you can [head directly to the source](https://github.com/kpurdon/greeters) though it really won't do much good without the comparisons and step-by-step construction presented in this article. I'll keep my opinion out of the construction and comparison (as much as possible) and present my preference in the conclusion.
+
+I'll be using the following versions in the comparisons during this article:
+
+```bash
+$ python --version
+Python 3.4.3 :: Continuum Analytics, Inc.
+
+# argparse is a Python core library
+
+$ pip list | grep click
+click (4.1)
+
+$ pip list | grep docopt
+docopt (0.6.2)
+
+$ pip list | grep invoke  # ignore this for now, it's a special surprise for later!
+invoke (0.10.1)
+```
 
 # Command Line Example
 
