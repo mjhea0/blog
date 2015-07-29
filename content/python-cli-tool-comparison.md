@@ -122,7 +122,7 @@ if __name__ == '__main__':
     arguments = docopt(__doc__)
 ```
 
-With this we now have two commands (hello, goodbye) and a built-in help message. Notice that the help message **DOES NOT** change when run as an option on the command hello. In addition we do not actually need to explicitly specify the `commands.py -h | --help` or the *Options* section to get a help command. However, if we do not specify them they will not show up in the output help message as options.
+With this we now have two commands (hello, goodbye) and a built-in help message. Notice that the help message **DOES NOT** change when run as an option on the command hello. In addition we **do not** need to explicitly specify the `commands.py -h | --help` in the *Options* section to get a help command. However, if we don't they will not show up in the output help message as options.
 
 ```bash
 
@@ -246,7 +246,7 @@ optional arguments:
 
 ### Docopt
 
-In order to add an option we simply add a `<name>` to the docstring. The `<>` are used to designate a positional argument. In order to execute the correct logic we must check if the command (treated as an argument) is True at runtime `if arguments['hello']:`, then dispatching to the correct functions.
+In order to add an option we add a `<name>` to the docstring. The `<>` are used to designate a positional argument. In order to execute the correct logic we must check if the command (treated as an argument) is True at runtime `if arguments['hello']:`, then call the correct function.
 
 ```python
 """Greeter.
@@ -299,7 +299,7 @@ Note that the help message is not specific to the subcommand, rather it is the e
 
 ### Click
 
-In order to add an argument to a click command we simply use the `@click.argument` decorator. In this case we are just passing the argument name, but there are [many more options](http://click.pocoo.org/4/arguments/) some of which we'll use later. With click command/subcommand dispatching is native. Since we are just decorating the logic (function) with the argument we don't need to do anything to set/dispatch to the correct logic.
+In order to add an argument to a click command we use the `@click.argument` decorator. In this case we are just passing the argument name, but there are [many more options](http://click.pocoo.org/4/arguments/) some of which we'll use later. Since we are decorating the logic (function) with the argument we don't need to do anything to set or make a call to the correct logic.
 
 ```python
 import click
@@ -338,7 +338,7 @@ Options:
 
 # Flags/Options
 
-In this section I will again be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Options are non-required inputs that can be given to alter the execution of a command-line utility. Flags are a subset of options that are True/False. For example: `--foo=bar` will pass *bar* as the value for the *foo* option, `--baz` (if defined as a flag) will pass the value of True is the option is given, or False if not.
+In this section I will again be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Options are non-required inputs that can be given to alter the execution of a command-line utility. Flags are a boolean only (True/False) subset of options. For example: `--foo=bar` will pass *bar* as the value for the *foo* option, `--baz` (if defined as a flag) will pass the value of True is the option is given, or False if not.
 
 For this example we are going to add the `--greeting=[greeting]` option, and the `--caps` flag. The *greeting* option will have default values of "Hello" and "Goodbye" (for hello, and goodbye commands) and allow the user to pass in a custom greeting. For example given `--greeting=Wazzup` the tool will respond with *Wazzup, [name]!*. The `--caps` flag will uppercase the entire response if given. For example given `--caps` the tool will respond with *HELLO, [NAME]!*.
 
@@ -490,7 +490,7 @@ if __name__ == '__main__':
         exit("{0} is not a command. See 'options.py --help'.".format(arguments['<command>']))
 ```
 
-As you can see the *hello|goodbye* subcommands are now there own docstrings ties to variables *HELLO* and *GOODBYE*. When the tool is executed it uses a new argument *command* to decide which to parse. Not only does this correct the problem we had with only one default, but we now have subcommand specific help messages as well.
+As you can see the *hello|goodbye* subcommands are now there own docstrings tied to the variables *HELLO* and *GOODBYE*. When the tool is executed it uses a new argument, *command*, to decide which to parse. Not only does this correct the problem we had with only one default, but we now have subcommand specific help messages as well.
 
 ```bash
 $ python docopt/options.py --help
@@ -532,7 +532,7 @@ WAZZUP, KYLE!
 
 ### Click
 
-Adding the *greeting* and *caps* option to click is very simple, as we just use the `@click.option` decorator for both. Again, since we have default greetings now we have refactored the logic out into a single function.
+To add the *greeting* and *caps* options as we use the `@click.option` decorator. Again, since we have default greetings now we have pulled the logic out into a single function (`def greeter(**kwargs):`).
 
 ```python
 import click
@@ -779,9 +779,11 @@ Options:
   -h, --help       Show this message and exit.
 ```
 
+With that we have completed the construction of the command-line utility we set out to build. Before we conclude let's take a look at another possible option.
+
 # Invoke
 
-Can we use [invoke](https://invoke.readthedocs.org/en/latest/) a simple task running library to build the greeter command-line utility? Let's find out!
+Can we use [invoke](https://invoke.readthedocs.org/en/latest/), a simple task running library, to build the greeter command-line utility? Let's find out!
 
 To start let's begin with the simplest version of the greeter:
 
@@ -886,9 +888,23 @@ def goodbye(name, greeting='Goodbye', caps=False):
 
 ```
 
+```bash
+$ invoke --help hello
+Usage: inv[oke] [--core-opts] hello [--options] [other tasks here ...]
+
+Docstring:
+  Say hello.
+
+Options:
+  -c, --caps                     uppercase the output
+  -g STRING, --greeting=STRING   word to use for the greeting
+  -n STRING, --name=STRING       name of the person to greet
+  -v, --version
+```
+
 ### Version Option
 
-Implementing a `--version` option is not quite as simple and comes with a caveat. The basics are that we've added a `version=False` option to each of the tasks that calls a new `print_version` function if True. In order to make this work we cannot have any positional arguments without defaults or we get:
+Implementing a `--version` option is not quite as simple and comes with a caveat. The basics are that we will add `version=False` as an option to each of the tasks that calls a new `print_version` function if True. In order to make this work we cannot have any positional arguments without defaults or we get:
 
 ```bash
 $ invoke hello --version
@@ -1105,15 +1121,15 @@ def goodbye(name='', greeting='Goodbye', caps=False, version=False):
     greet(name, greeting, caps)
 ```
 
-Now, to get this out of the way my personal go-to library is click. I have been using it on large multi-command complex interfaces for the last year. (Credit goes to [@kwbeam](https://twitter.com/kwbeam) for introducing me to click). I prefer the decorator approach and think it lends a very clean, composable interface. That being said, let's evaluate each option.
+Now, to get this out of the way my personal go-to library is click. I have been using it on large, multi-command, complex interfaces for the last year. (Credit goes to [@kwbeam](https://twitter.com/kwbeam) for introducing me to click). I prefer the decorator approach and think it lends a very clean, composable interface. That being said, let's evaluate each option fairly.
 
 ### arparse
 
-**Arparse is the standard library (included with Python) for creating command-line utilities.** For that fact alone it is arguably the most used of the tools examined here. Argparse is also very simple to use as lots of *magic* (implicit work that happens behind the scenes) is used to construct the interface. For example both arguments and options are defined using the `add_arguments` method, argparse figures our which is which behind the scenes.
+**Arparse is the standard library (included with Python) for creating command-line utilities.** For that fact alone it is arguably the most used of the tools examined here. Argparse is also very simple to use as lots of *magic* (implicit work that happens behind the scenes) is used to construct the interface. For example both arguments and options are defined using the `add_arguments` method and argparse figures out which is which behind the scenes.
 
 ### docopt
 
-**If you think writing documentation is great, docopt is for you!** In addition docopt has implementations for [many other languages](https://github.com/docopt) meaning you can learn one tool and use it across many languages. The downside of docopt is that it is very structured in the way you have to define your command-line interface. (Some might say this is a good thing!)
+**If you think writing documentation is great, docopt is for you!** In addition docopt has implementations for [many other languages](https://github.com/docopt) meaning you can learn one library and use it across many languages. The downside of docopt is that it is very structured in the way you have to define your command-line interface. (Some might say this is a good thing!)
 
 ### click
 
