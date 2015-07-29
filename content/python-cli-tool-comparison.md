@@ -43,7 +43,9 @@ This simple command line tool breaks down into a few things the library we choos
 2. Arguments (name)
 3. Flags/Options (--greeting, --caps)
 
-In addition automated help messages are important, and to throw a wrench in lets say we also want a `-v/--version` option that will print the version number and quit. As you would expect argparse, docopt, and click implement all of these features (as any simple command line library would). This means that this comparison is going to break down into a stylistic preference. I'll leave my personal preferences for the end!
+In addition automated help messages are important, and to throw a wrench in lets say we also want a `-v/--version` option that will print the version number and quit. As you would expect argparse, docopt, and click implement all of these features (as any simple command line library would). This means that this comparison is mostly going to break down into a stylistic preference. I'll leave my personal preferences for the end!
+
+In addition I've been curious about using task-runner libraries like [fabric]() and it's python3 replacement [invoke]() to create simple command-line interfaces so at the end (after comparing argparse, docopt, and click) I will try and put the same interface together with invoke.
 
 # Commands
 
@@ -102,7 +104,7 @@ if __name__ == '__main__':
     arguments = docopt(__doc__)
 ```
 
-With this we now have two commands (hello, goodbye) and a built-in help message. Notice that the help message **DOES NOT** change when run as an option on the command hello. In addition we do not actually need to explecitly specify the `commands.py -h | --help` or the *Options* section to get a help command. However, if we do not specify them they will not show up in the output help message as options.
+With this we now have two commands (hello, goodbye) and a built-in help message. Notice that the help message **DOES NOT** change when run as an option on the command hello. In addition we do not actually need to explicitly specify the `commands.py -h | --help` or the *Options* section to get a help command. However, if we do not specify them they will not show up in the output help message as options.
 
 ```bash
 
@@ -226,7 +228,7 @@ optional arguments:
 
 ### Docopt
 
-In order to add an option we simply add a `<name>` to the docstring. The `<>` are used to designame a positional argument. In order to execute the correct logic we must check if the command (treated as an argument) is True at runtime `if arguments['hello']:`, then dispatching to the correct functions.
+In order to add an option we simply add a `<name>` to the docstring. The `<>` are used to designate a positional argument. In order to execute the correct logic we must check if the command (treated as an argument) is True at runtime `if arguments['hello']:`, then dispatching to the correct functions.
 
 ```python
 """Greeter.
@@ -291,7 +293,7 @@ def greet():
 
 
 @greet.command()
-@click.argument('name')  # add the name agrument
+@click.argument('name')  # add the name argument
 def hello(**kwargs):
     print('Hello, {0}!'.format(kwargs['name']))
 
@@ -320,7 +322,7 @@ Options:
 
 In this section I will again be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Options are non-required inputs that can be given to alter the execution of a command-line tool. Flags are a subset of options that are True/False. For example: `--foo=bar` will pass *bar* as the value for the *foo* option, `--baz` (if defined as a flag) will pass the value of True is the option is given, or False if not.
 
-For this example we are going to add the `--greeting=[greeting]` option, and the `--caps` flag. The *greeting* optiona will have default values of "Hello" and "Goodbye" (for hello, and goodbye commands) and allow the user to pass in a custom greeting. For example given `--greeting=Wazzup` the tool will respond with *Wazzup, [name]!*. The `--caps` flag will uppercase the entire response if given. For example given `--caps` the tool will respond with *HELLO, [NAME]!*.
+For this example we are going to add the `--greeting=[greeting]` option, and the `--caps` flag. The *greeting* option will have default values of "Hello" and "Goodbye" (for hello, and goodbye commands) and allow the user to pass in a custom greeting. For example given `--greeting=Wazzup` the tool will respond with *Wazzup, [name]!*. The `--caps` flag will uppercase the entire response if given. For example given `--caps` the tool will respond with *HELLO, [NAME]!*.
 
 ### Argparse
 
@@ -378,7 +380,7 @@ optional arguments:
 
 ### Docopt
 
-Once we hit the case of adding options with defaults we hit a snag with the basic implmentation of commands in docopt. Let's continue just to illistrate the issue.
+Once we hit the case of adding options with defaults we hit a snag with the basic implementation of commands in docopt. Let's continue just to illustrate the issue.
 
 ```python
 """Greeter.
@@ -470,7 +472,7 @@ if __name__ == '__main__':
         exit("{0} is not a command. See 'options.py --help'.".format(arguments['<command>']))
 ```
 
-As you can see the *hello|goodbye* subcommands are now there own doctrings ties to variables *HELLO* and *GOODBYE*. When the tool is executed it uses a new argument *command* to decide which to parse. Not only does this correct the problem we had with only one default, but we now have subcommand specific help messages as well.
+As you can see the *hello|goodbye* subcommands are now there own docstrings ties to variables *HELLO* and *GOODBYE*. When the tool is executed it uses a new argument *command* to decide which to parse. Not only does this correct the problem we had with only one default, but we now have subcommand specific help messages as well.
 
 ```bash
 $ python docopt/options.py --help
