@@ -1,4 +1,4 @@
-title: Comparing Python Command-Line Utility Libraries
+title: Comparing Python Command-Line Parsing Libraries (Argparse, Docopt, and Click)
 date:
 category: Software, Tools
 tags: python, development
@@ -1138,3 +1138,132 @@ I've already said that I really like click and have been using it in production 
 ### invoke
 
 **Invoke surprised me in this comparison.** I thought that a library designed for task execution might not be able to easily match full command-line libraries but it did! That being said I would not recommend using it for this type of work as you will certainly run into limitations for anything more complex than the example presented here.
+
+# Bonus: Packaging Command-Line Applications
+
+Since not everyone is packaging up there python source with [setuptools](https://pypi.python.org/pypi/setuptools) (or other solutions) I decided not to make this a core component of the article. In addition I don't want to cover *packaging* as a complete topic. If you want to learn more about packaging with setuptools [go here](https://packaging.python.org/en/latest/) or with conda [go here](http://conda.pydata.org/docs/building/build.html) or you can read my previous [blog post](http://kylepurdon.com/blog/packaging-python-basics-with-continuum-analytics-conda.html) on conda packaging. **What I will cover here is how to use the entry_points option to make a command-line utility and executable command on install**.
+
+### Entry Point Basics
+
+An [entry_point](https://packaging.python.org/en/latest/distributing.html?highlight=entry_points#entry-points) is essentially a map to a single function in your code that will be given a command on your systems PATH. An entry_point has the form: `command = package.module:function`
+
+The best way to explain this is to just look at our *click* example and add an entry point.
+
+### Packaging Click Commands
+
+Click makes packaging simple as by default we are calling a single function when we execute our program.
+
+```python
+if __name__ == '__main__':
+    greet()
+```
+
+In addition to the rest of the *setup.py* (not covered here) we would add the following to create an entry_point for our click application.
+
+Assuming the following directory structure:
+
+```
+greeter/
+├── greet
+│   ├── __init__.py
+│   └── cli.py       <-- the same as our final.py
+└── setup.py
+```
+
+We will create the following entry_point:
+
+```python
+entry_points={
+    'console_scripts': [
+        'greet=greet.cli:greet',  # command=package.module:function
+    ],
+},
+```
+
+When a user installs the package created with this entry_point setuptools will create the following executable script (called greet) and place it on the PATH of the users system.
+
+```python
+#!/usr/bin/python
+if __name__ == '__main__':
+    import sys
+    from greet.cli import greet
+
+    sys.exit(greet())
+```
+
+After installation the user will now be able to run the following:
+
+```bash
+$ greet --help
+Usage: greet [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --version   Show the version and exit.
+  -h, --help  Show this message and exit.
+
+Commands:
+  goodbye
+  hello
+```
+
+### Packaging Argparse Commands
+
+The only thing we need to do differently from click is to pull all of the application initialization into a single function that we can call in our entry_point.
+
+This:
+
+```python
+if __name__ == '__main__':
+    args = parser.parse_args()
+    args.func(args)
+```
+
+Becomes:
+
+```python
+
+def greet():
+    args = parser.parse_args()
+    args.func(args)
+
+if __name__ == '__main__':
+    greet()
+
+```
+
+Now we can use the same pattern for the entry_point we defined for click.
+
+### Packaging Docopt Commands
+
+Packaging docopt commands requires the same process as argparse.
+
+This:
+
+```python
+if __name__ == '__main__':
+    arguments = docopt(__doc__, options_first=True, version='1.0.0')
+
+    if arguments['<command>'] == 'hello':
+        greet(docopt(HELLO))
+    elif arguments['<command>'] == 'goodbye':
+        greet(docopt(GOODBYE))
+    else:
+        exit("{0} is not a command. See 'options.py --help'.".format(arguments['<command>']))
+```
+
+Becomes:
+
+```python
+def greet():
+    arguments = docopt(__doc__, options_first=True, version='1.0.0')
+
+    if arguments['<command>'] == 'hello':
+        greet(docopt(HELLO))
+    elif arguments['<command>'] == 'goodbye':
+        greet(docopt(GOODBYE))
+    else:
+        exit("{0} is not a command. See 'options.py --help'.".format(arguments['<command>']))
+
+if __name__ == '__main__':
+    greet()
+```
