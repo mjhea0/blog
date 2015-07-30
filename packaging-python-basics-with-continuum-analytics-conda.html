@@ -246,6 +246,7 @@
 
 <h1>Packaging A Project</h1>
 <p>Amazingly to turn this project into a conda package we only need to add a single file, the <em>meta.yaml</em>.</p>
+<p><strong>EDIT 07/29/2015</strong>: The build:script commands were incorrect.</p>
 <div class="highlight"><pre><span class="n">package</span><span class="p">:</span>
   <span class="n">name</span><span class="p">:</span> <span class="n">dtools</span>
   <span class="n">version</span><span class="p">:</span> <span class="s">&quot;0.0.1&quot;</span>
@@ -255,8 +256,8 @@
 
 <span class="n">build</span><span class="p">:</span>
   <span class="n">script</span><span class="p">:</span>
-    <span class="o">-</span> <span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="s">&quot;*.pyc&quot;</span> <span class="o">-</span><span class="nb">type</span> <span class="n">f</span> <span class="o">-</span><span class="n">delete</span>
-    <span class="o">-</span> <span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="s">&quot;__pycache__&quot;</span> <span class="o">-</span><span class="nb">type</span> <span class="n">d</span> <span class="o">-</span><span class="n">delete</span>
+    <span class="o">-</span> <span class="n">flake8</span> <span class="o">.</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">config</span><span class="o">=.</span><span class="n">flake8rc</span>
+    <span class="o">-</span> <span class="n">nosetests</span> <span class="o">--</span><span class="n">verbose</span>
     <span class="o">-</span> <span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
   <span class="n">entry_points</span><span class="p">:</span>
     <span class="o">-</span> <span class="n">yyyymmdd2doy</span> <span class="o">=</span> <span class="n">conversion</span><span class="o">.</span><span class="n">cli</span><span class="p">:</span><span class="n">main</span>

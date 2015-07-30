@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Comparing Python Command-Line Utility Libraries. - Kyle W. Purdon</title>
+    <title>Comparing Python Command-Line Utility Libraries - Kyle W. Purdon</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -17,7 +17,7 @@
 
         <meta property="og:site_name" content="Kyle W. Purdon" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Comparing Python Command-Line Utility Libraries."/>
+        <meta property="og:title" content="Comparing Python Command-Line Utility Libraries"/>
         <meta property="og:url" content="http://kylepurdon.com/blog/drafts/comparing-python-command-line-utility-libraries.html"/>
         <meta property="og:description" content="A comparison of Python command-line utility libraries (argparse, docopt, and click)."/>
         <meta property="article:published_time" content="2015-07-29" />
@@ -78,8 +78,8 @@
                 <h1>
                     <a href="http://kylepurdon.com/blog/drafts/comparing-python-command-line-utility-libraries.html"
                        rel="bookmark"
-                       title="Permalink to Comparing Python Command-Line Utility Libraries.">
-                        Comparing Python Command-Line Utility Libraries.
+                       title="Permalink to Comparing Python Command-Line Utility Libraries">
+                        Comparing Python Command-Line Utility Libraries
                     </a>
                 </h1>
             </header>
@@ -103,9 +103,26 @@
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>Some Introduction Here.</p>
-<h1>Command Line Example</h1>
-<p>The command line tool that we are creating will have the following interface:</p>
+                <p>About a year ago I began a job where building libraries with command-line interfaces was a very common occurrence. At that time I had used <a href="https://docs.python.org/3/library/argparse.html">argparse</a> quite a bit and wanted to explore what other options were available. I found that the most popular alternatives available were <a href="http://click.pocoo.org/4/">click</a> and <a href="http://docopt.org/">docopt</a>. During my exploration I also found that other than each libraries "why use me" section there was not much available for a complete comparison of the three libraries. Now there is! If you want to you can <a href="https://github.com/kpurdon/greeters">head directly to the source</a> though it really won't do much good without the comparisons and step-by-step construction presented in this article. I'll keep my opinion out of the construction and comparison (as much as possible) and present my preference in the conclusion.</p>
+<p>I'll be using the following versions in the comparisons during this article:</p>
+<div class="highlight"><pre><span class="nv">$ </span>python --version
+Python 3.4.3 :: Continuum Analytics, Inc.
+
+<span class="c"># argparse is a Python core library</span>
+
+<span class="nv">$ </span>pip list <span class="p">|</span> grep click
+click <span class="o">(</span>4.1<span class="o">)</span>
+
+<span class="nv">$ </span>pip list <span class="p">|</span> grep docopt
+docopt <span class="o">(</span>0.6.2<span class="o">)</span>
+
+<span class="nv">$ </span>pip list <span class="p">|</span> grep invoke  <span class="c"># ignore this for now, it&#39;s a special surprise for later!</span>
+invoke <span class="o">(</span>0.10.1<span class="o">)</span>
+</pre></div>
+
+
+<h1>Command-Line Example</h1>
+<p>The command-line utility that we are creating will have the following interface:</p>
 <p><code>python [file].py [command] [options] NAME</code></p>
 <p><strong>Basic Usage</strong></p>
 <div class="highlight"><pre><span class="nv">$ </span>python <span class="o">[</span>file<span class="o">]</span>.py hello Kyle
@@ -131,14 +148,14 @@ WAZZUP, KYLE!
 </pre></div>
 
 
-<p>This simple command line tool breaks down into a few things the library we choose will need to implement:</p>
+<p>This simple command-line utility breaks down into a few things the library we choose will need to implement:</p>
 <ol>
 <li>Commands (hello, goodbye)</li>
 <li>Arguments (name)</li>
 <li>Flags/Options (--greeting, --caps)</li>
 </ol>
-<p>In addition automated help messages are important, and to throw a wrench in lets say we also want a <code>-v/--version</code> option that will print the version number and quit. As you would expect argparse, docopt, and click implement all of these features (as any simple command line library would). This means that this comparison is mostly going to break down into a stylistic preference. I'll leave my personal preferences for the end!</p>
-<p>I've been curious about using task-runner libraries like <a href="">fabric</a> and it's python3 replacement <a href="">invoke</a> to create simple command-line interfaces so at the end (after comparing argparse, docopt, and click) I will try and put the same interface together with invoke.</p>
+<p>In addition automated help messages are important, and to throw a wrench in lets say we also want a <code>-v/--version</code> option that will print the version number and quit. As you would expect argparse, docopt, and click implement all of these features (as any simple command-line library would). This means that this comparison is mostly going to break down into a stylistic preference. I'll leave my personal preferences for the end!</p>
+<p>I've been curious about using task-runner libraries like <a href="https://fabric.readthedocs.org/en/latest/">fabric</a> and it's python3 replacement <a href="https://invoke.readthedocs.org/en/latest/">invoke</a> to create simple command-line interfaces so at the end (after comparing argparse, docopt, and click) I will try and put the same interface together with invoke.</p>
 <h1>Commands</h1>
 <p>Let's begin by setting up the basic skeleton (no arguments or options) with each library.</p>
 <h3>Argparse</h3>
@@ -191,7 +208,7 @@ optional arguments:
 </pre></div>
 
 
-<p>With this we now have two commands (hello, goodbye) and a built-in help message. Notice that the help message <strong>DOES NOT</strong> change when run as an option on the command hello. In addition we do not actually need to explicitly specify the <code>commands.py -h | --help</code> or the <em>Options</em> section to get a help command. However, if we do not specify them they will not show up in the output help message as options.</p>
+<p>With this we now have two commands (hello, goodbye) and a built-in help message. Notice that the help message <strong>DOES NOT</strong> change when run as an option on the command hello. In addition we <strong>do not</strong> need to explicitly specify the <code>commands.py -h | --help</code> in the <em>Options</em> section to get a help command. However, if we don't they will not show up in the output help message as options.</p>
 <div class="highlight"><pre><span class="nv">$ </span>python docopt/commands.py --help
 Greeter.
 
@@ -258,9 +275,9 @@ Options:
 </pre></div>
 
 
-<p>Even at this point you can see that we have very different approaches to constructing a basic command line tool. Next let's add the <em>NAME</em> argument, and the logic to print the result to each tool.</p>
+<p>Even at this point you can see that we have very different approaches to constructing a basic command-line utility. Next let's add the <em>NAME</em> argument, and the logic to print the result to each tool.</p>
 <h1>Arguments</h1>
-<p>In this section I will be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Arguments (a.k.a positional arguments) are required inputs to a command line tool. In this case we are adding a required "name" argument so that the tool can greet a specific person.</p>
+<p>In this section I will be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Arguments (a.k.a positional arguments) are required inputs to a command-line utility. In this case we are adding a required "name" argument so that the tool can greet a specific person.</p>
 <h3>Argparse</h3>
 <p>To add an argument to a subcommand we use the <code>add_argument</code> method. And in order to execute the correct logic when a command is called we use the <code>set_defaults</code> method to set a default function. Finally we execute the default function by calling <code>args.func(args)</code> after we parse the arguments at runtime.</p>
 <div class="highlight"><pre><span class="kn">import</span> <span class="nn">argparse</span>
@@ -305,7 +322,7 @@ optional arguments:
 
 
 <h3>Docopt</h3>
-<p>In order to add an option we simply add a <code>&lt;name&gt;</code> to the docstring. The <code>&lt;&gt;</code> are used to designate a positional argument. In order to execute the correct logic we must check if the command (treated as an argument) is True at runtime <code>if arguments['hello']:</code>, then dispatching to the correct functions.</p>
+<p>In order to add an option we add a <code>&lt;name&gt;</code> to the docstring. The <code>&lt;&gt;</code> are used to designate a positional argument. In order to execute the correct logic we must check if the command (treated as an argument) is True at runtime <code>if arguments['hello']:</code>, then call the correct function.</p>
 <div class="highlight"><pre><span class="sd">&quot;&quot;&quot;Greeter.</span>
 
 <span class="sd">Usage:</span>
@@ -355,7 +372,7 @@ Options:
 
 <p>Note that the help message is not specific to the subcommand, rather it is the entire docstring for the program.</p>
 <h3>Click</h3>
-<p>In order to add an argument to a click command we simply use the <code>@click.argument</code> decorator. In this case we are just passing the argument name, but there are <a href="http://click.pocoo.org/4/arguments/">many more options</a> some of which we'll use later. With click command/subcommand dispatching is native. Since we are just decorating the logic (function) with the argument we dont need to do anything to set/dispatch to the correct logic.</p>
+<p>In order to add an argument to a click command we use the <code>@click.argument</code> decorator. In this case we are just passing the argument name, but there are <a href="http://click.pocoo.org/4/arguments/">many more options</a> some of which we'll use later. Since we are decorating the logic (function) with the argument we don't need to do anything to set or make a call to the correct logic.</p>
 <div class="highlight"><pre><span class="kn">import</span> <span class="nn">click</span>
 
 
@@ -392,7 +409,7 @@ Options:
 
 
 <h1>Flags/Options</h1>
-<p>In this section I will again be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Options are non-required inputs that can be given to alter the execution of a command-line tool. Flags are a subset of options that are True/False. For example: <code>--foo=bar</code> will pass <em>bar</em> as the value for the <em>foo</em> option, <code>--baz</code> (if defined as a flag) will pass the value of True is the option is given, or False if not.</p>
+<p>In this section I will again be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Options are non-required inputs that can be given to alter the execution of a command-line utility. Flags are a boolean only (True/False) subset of options. For example: <code>--foo=bar</code> will pass <em>bar</em> as the value for the <em>foo</em> option, <code>--baz</code> (if defined as a flag) will pass the value of True is the option is given, or False if not.</p>
 <p>For this example we are going to add the <code>--greeting=[greeting]</code> option, and the <code>--caps</code> flag. The <em>greeting</em> option will have default values of "Hello" and "Goodbye" (for hello, and goodbye commands) and allow the user to pass in a custom greeting. For example given <code>--greeting=Wazzup</code> the tool will respond with <em>Wazzup, [name]!</em>. The <code>--caps</code> flag will uppercase the entire response if given. For example given <code>--caps</code> the tool will respond with <em>HELLO, [NAME]!</em>.</p>
 <h3>Argparse</h3>
 <div class="highlight"><pre><span class="kn">import</span> <span class="nn">argparse</span>
@@ -537,7 +554,7 @@ Hello, Kyle!
 </pre></div>
 
 
-<p>As you can see the <em>hello|goodbye</em> subcommands are now there own docstrings ties to variables <em>HELLO</em> and <em>GOODBYE</em>. When the tool is executed it uses a new argument <em>command</em> to decide which to parse. Not only does this correct the problem we had with only one default, but we now have subcommand specific help messages as well.</p>
+<p>As you can see the <em>hello|goodbye</em> subcommands are now there own docstrings tied to the variables <em>HELLO</em> and <em>GOODBYE</em>. When the tool is executed it uses a new argument, <em>command</em>, to decide which to parse. Not only does this correct the problem we had with only one default, but we now have subcommand specific help messages as well.</p>
 <div class="highlight"><pre><span class="nv">$ </span>python docopt/options.py --help
 usage: greet <span class="o">[</span>--help<span class="o">]</span> &lt;<span class="nb">command</span>&gt; <span class="o">[</span>&lt;args&gt;...<span class="o">]</span>
 
@@ -576,7 +593,7 @@ WAZZUP, KYLE!
 
 
 <h3>Click</h3>
-<p>Adding the <em>greeting</em> and <em>caps</em> option to click is very simple, as we just use the <code>@click.option</code> decorator for both. Again, since we have default greetings now we have refactored the logic out into a single function.</p>
+<p>To add the <em>greeting</em> and <em>caps</em> options as we use the <code>@click.option</code> decorator. Again, since we have default greetings now we have pulled the logic out into a single function (<code>def greeter(**kwargs):</code>).</p>
 <div class="highlight"><pre><span class="kn">import</span> <span class="nn">click</span>
 
 
@@ -624,15 +641,18 @@ HELLO, KYLE!
 </pre></div>
 
 
-<h1>Version Option (-v/--version)</h1>
-<p>In this section I'll be showing how to add a <code>--version</code> argument to each of our tools. For simplicity we'll just hardcode the version number to <em>1.0.0</em>. In a real production application you will want to pull this from the installed application. One way I have done this (there are many options) is with this simple process:</p>
+<h1>Version Option (--version)</h1>
+<p>In this section I'll be showing how to add a <code>--version</code> argument to each of our tools. For simplicity we'll just hardcode the version number to <em>1.0.0</em>. In a production application you will want to pull this from the installed application. One way I have done this (there are many options) is with this simple process:</p>
 <div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">pkg_resources</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="s">&quot;click&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">version</span>  <span class="c"># replace click with the name of your tool</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="s">&#39;4.1&#39;</span>
 </pre></div>
 
 
+<p>A second option for determining the version would be to have automated version-bumping software change the version number defined in the file when a new version is released. This is possible with <a href="https://pypi.python.org/pypi/bumpversion">bumpversion</a> but I would not recommend the approach as it's easy to get out of sync. Generally it's best practice to keep a version number in as few places as possible.</p>
+<p>Since the implementation of adding a hard-coded version option is fairly simple I will use the <code>...</code> to denote skipped sections of the code from the last section.</p>
 <h3>Argparse</h3>
+<p>For argparse we again need to use the <code>add_argument</code> method, this time with the <code>action='version'</code> parameter and a value for <code>version</code> passed in. We apply this method to the root parser (instead of the <em>hello</em> or <em>goodbye</em> subparsers).</p>
 <div class="highlight"><pre><span class="o">...</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
 <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--version&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;version&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s">&#39;1.0.0&#39;</span><span class="p">)</span>
@@ -646,49 +666,487 @@ HELLO, KYLE!
 
 
 <h3>Docopt</h3>
-<div class="highlight"><pre>
+<p>In order to add <code>--version</code> to docopt we add it as an option to our primary docstring. In addition we add the <code>version</code> parameter to our first call to docopt (parsing the primary docstring).</p>
+<div class="highlight"><pre><span class="sd">&quot;&quot;&quot;usage: greet [--help] &lt;command&gt; [&lt;args&gt;...]</span>
+
+<span class="sd">options:</span>
+<span class="sd">  -h --help         Show this screen.</span>
+<span class="sd">  --version         Show the version.</span>
+
+<span class="sd">commands:</span>
+<span class="sd">   hello       Say hello</span>
+<span class="sd">   goodbye     Say goodbye</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">docopt</span> <span class="kn">import</span> <span class="n">docopt</span>
+
+<span class="o">...</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">docopt</span><span class="p">(</span><span class="n">__doc__</span><span class="p">,</span> <span class="n">options_first</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s">&#39;1.0.0&#39;</span><span class="p">)</span>
+    <span class="o">...</span>
 </pre></div>
 
 
-<div class="highlight"><pre>
+<div class="highlight"><pre><span class="nv">$ </span>python docopt/version.py --version
+1.0.0
 </pre></div>
 
 
 <h3>Click</h3>
-<div class="highlight"><pre>
+<p>Click provides us with a convince in the <code>@click.version_option</code> decorator. To add this we decorate our greet function (main <code>@click.group</code> function).</p>
+<div class="highlight"><pre><span class="o">...</span>
+<span class="nd">@click.group</span><span class="p">()</span>
+<span class="nd">@click.version_option</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="s">&#39;1.0.0&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">greet</span><span class="p">():</span>
+    <span class="o">...</span>
 </pre></div>
 
 
-<div class="highlight"><pre>
+<div class="highlight"><pre><span class="nv">$ </span>python click/version.py --version
+version.py, version 1.0.0
 </pre></div>
 
 
 <h1>Improving Help (-h/--help)</h1>
+<p>The final step to completing our application is to improve the help documentation for each of the tools. We'll want to make sure that we can access help with both <code>-h</code> and <code>--help</code> and that each <em>argument</em> and <em>option</em> has some level of description.</p>
 <h3>Argparse</h3>
-<div class="highlight"><pre>
+<p>By default argparse provides us with both <code>-h</code> and <code>--help</code> so we don't need to add anything for that. However our current help documentation for the subcommands is lacking information on what <code>--caps</code> and <code>--greeting</code> do and what the <code>name</code> argument is.</p>
+<div class="highlight"><pre><span class="nv">$ </span>python argparse/version.py hello -h
+usage: version.py hello <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>--greeting GREETING<span class="o">]</span> <span class="o">[</span>--caps<span class="o">]</span> name
+
+positional arguments:
+  name
+
+optional arguments:
+  -h, --help           show this <span class="nb">help </span>message and <span class="nb">exit</span>
+  --greeting GREETING
+  --caps
 </pre></div>
 
 
-<div class="highlight"><pre>
+<p>In order to add more information we use the <code>help</code> parameter of the <code>add_argument</code> method.</p>
+<div class="highlight"><pre><span class="o">...</span>
+
+<span class="n">hello_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s">&#39;hello&#39;</span><span class="p">)</span>
+<span class="n">hello_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;name of the person to greet&#39;</span><span class="p">)</span>
+<span class="n">hello_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--greeting&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;word to use for the greeting&#39;</span><span class="p">)</span>
+<span class="n">hello_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--caps&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;uppercase the output&#39;</span><span class="p">)</span>
+<span class="n">hello_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">greet</span><span class="p">)</span>
+
+<span class="n">goodbye_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s">&#39;goodbye&#39;</span><span class="p">)</span>
+<span class="n">goodbye_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;name of the person to greet&#39;</span><span class="p">)</span>
+<span class="n">goodbye_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--greeting&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;word to use for the greeting&#39;</span><span class="p">)</span>
+<span class="n">goodbye_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--caps&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;uppercase the output&#39;</span><span class="p">)</span>
+
+<span class="o">...</span>
+</pre></div>
+
+
+<p>Now when we provide the help flag we get a much more complete result:</p>
+<div class="highlight"><pre><span class="nv">$ </span>python argparse/help.py hello -h
+usage: help.py hello <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>--greeting GREETING<span class="o">]</span> <span class="o">[</span>--caps<span class="o">]</span> name
+
+positional arguments:
+  name                 name of the person to greet
+
+optional arguments:
+  -h, --help           show this <span class="nb">help </span>message and <span class="nb">exit</span>
+  --greeting GREETING  word to use <span class="k">for</span> the greeting
+  --caps               uppercase the output
 </pre></div>
 
 
 <h3>Docopt</h3>
-<div class="highlight"><pre>
-</pre></div>
+<p>This section is where docopt gets it's chance to shine. Because we wrote the documentation as the definition of the command-line interface itself we already have a complete help. In addition <code>-h</code> and <code>--help</code> are already provided.</p>
+<div class="highlight"><pre><span class="nv">$ </span>python docopt/help.py hello -h
+usage: basic.py hello <span class="o">[</span>options<span class="o">]</span> <span class="o">[</span>--<span class="o">]</span> <span class="o">[</span>&lt;name&gt;<span class="o">]</span>
 
-
-<div class="highlight"><pre>
+  -h --help         Show this screen.
+  --caps            Uppercase the output.
+  --greeting<span class="o">=</span>&lt;str&gt;  Greeting to use <span class="o">[</span>default: Hello<span class="o">]</span>.
 </pre></div>
 
 
 <h3>Click</h3>
-<div class="highlight"><pre>
+<p>Adding help documentation in click is very similar to argparse. We need to add the <code>help</code> parameter to all of our <code>@click.option</code> decorators.</p>
+<div class="highlight"><pre><span class="o">...</span>
+
+<span class="nd">@greet.command</span><span class="p">()</span>
+<span class="nd">@click.argument</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--greeting&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;word to use for the greeting&#39;</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--caps&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;uppercase the output&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">greeter</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="nd">@greet.command</span><span class="p">()</span>
+<span class="nd">@click.argument</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--greeting&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;Goodbye&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;word to use for the greeting&#39;</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--caps&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;uppercase the output&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">goodbye</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">greeter</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="o">...</span>
 </pre></div>
 
 
-<div class="highlight"><pre>
+<p>However, click <strong>DOES NOT</strong> provide us <code>-h</code> by default. We need to use the <code>context_settings</code> parameter to override the default <code>help_option_names</code>.</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">click</span>
+
+<span class="n">CONTEXT_SETTINGS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">help_option_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;-h&#39;</span><span class="p">,</span> <span class="s">&#39;--help&#39;</span><span class="p">])</span>
+
+<span class="o">...</span>
+
+<span class="nd">@click.group</span><span class="p">(</span><span class="n">context_settings</span><span class="o">=</span><span class="n">CONTEXT_SETTINGS</span><span class="p">)</span>
+<span class="nd">@click.version_option</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="s">&#39;1.0.0&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">greet</span><span class="p">():</span>
+    <span class="k">pass</span>
 </pre></div>
+
+
+<p>Now the click help documentation is complete.</p>
+<div class="highlight"><pre><span class="nv">$ </span>python click/help.py hello -h
+Usage: help.py hello <span class="o">[</span>OPTIONS<span class="o">]</span> NAME
+
+Options:
+  --greeting TEXT  word to use <span class="k">for</span> the greeting
+  --caps           uppercase the output
+  -h, --help       Show this message and exit.
+</pre></div>
+
+
+<p>With that we have completed the construction of the command-line utility we set out to build. Before we conclude let's take a look at another possible option.</p>
+<h1>Invoke</h1>
+<p>Can we use <a href="https://invoke.readthedocs.org/en/latest/">invoke</a>, a simple task running library, to build the greeter command-line utility? Let's find out!</p>
+<p>To start let's begin with the simplest version of the greeter:</p>
+<p><em>tasks.py</em></p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">invoke</span> <span class="kn">import</span> <span class="n">task</span>
+
+
+<span class="nd">@task</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Hello, {0}!&#39;</span><span class="o">.</span> <span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+
+<span class="nd">@task</span>
+<span class="k">def</span> <span class="nf">goodbye</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Goodbye, {0}!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+</pre></div>
+
+
+<p>With this very simple file we get a two tasks, and a very minimal help. From the same directory as <em>tasks.py</em> we get the following results:</p>
+<div class="highlight"><pre><span class="nv">$ </span>invoke -l
+Available tasks:
+
+  goodbye
+  hello
+
+<span class="nv">$ </span>invoke hello Kyle
+Hello, Kyle!
+
+<span class="nv">$ </span>invoke goodbye Kyle
+Goodbye, Kyle!
+</pre></div>
+
+
+<p>Now let's add in our options/flags <code>--greeting</code> and <code>--caps</code>. In addition we can pull out the greet logic into it's own function just as we did with the other tools.</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">invoke</span> <span class="kn">import</span> <span class="n">task</span>
+
+
+<span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">greeting</span><span class="p">,</span> <span class="n">caps</span><span class="p">):</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="s">&#39;{0}, {1}!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">greeting</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">caps</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+
+<span class="nd">@task</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">greeting</span><span class="o">=</span><span class="s">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">caps</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="n">greet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">greeting</span><span class="p">,</span> <span class="n">caps</span><span class="p">)</span>
+
+
+<span class="nd">@task</span>
+<span class="k">def</span> <span class="nf">goodbye</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">greeting</span><span class="o">=</span><span class="s">&#39;Goodbye&#39;</span><span class="p">,</span> <span class="n">caps</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="n">greet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">greeting</span><span class="p">,</span> <span class="n">caps</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Now we actually have the complete interface we designated in the beginning!</p>
+<div class="highlight"><pre><span class="nv">$ </span>invoke hello Kyle
+Hello, Kyle!
+
+<span class="nv">$ </span>invoke hello --greeting<span class="o">=</span>Wazzup Kyle
+Wazzup, Kyle!
+
+<span class="nv">$ </span>invoke hello --greeting<span class="o">=</span>Wazzup --caps Kyle
+WAZZUP, KYLE!
+
+<span class="nv">$ </span>invoke hello --caps Kyle
+HELLO, KYLE!
+</pre></div>
+
+
+<h3>Help Documentation</h3>
+<p>In order to compete with argparse, docopt, and click we'll also need to be able to add complete help documentation. Luckily this is also available in <em>invoke</em> by using the <code>help</code> parameter of the <code>@task</code> decorator and adding docstrings to the decorated functions.</p>
+<div class="highlight"><pre><span class="o">...</span>
+
+<span class="n">HELP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;name of the person to greet&#39;</span><span class="p">,</span>
+    <span class="s">&#39;greeting&#39;</span><span class="p">:</span> <span class="s">&#39;word to use for the greeting&#39;</span><span class="p">,</span>
+    <span class="s">&#39;caps&#39;</span><span class="p">:</span> <span class="s">&#39;uppercase the output&#39;</span>
+<span class="p">}</span>
+
+
+<span class="nd">@task</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="n">HELP</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">greeting</span><span class="o">=</span><span class="s">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">caps</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Say hello.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">greet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">greeting</span><span class="p">,</span> <span class="n">caps</span><span class="p">)</span>
+
+
+<span class="nd">@task</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="n">HELP</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">goodbye</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">greeting</span><span class="o">=</span><span class="s">&#39;Goodbye&#39;</span><span class="p">,</span> <span class="n">caps</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Say goodbye.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">greet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">greeting</span><span class="p">,</span> <span class="n">caps</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span class="nv">$ </span>invoke --help hello
+Usage: inv<span class="o">[</span>oke<span class="o">]</span> <span class="o">[</span>--core-opts<span class="o">]</span> hello <span class="o">[</span>--options<span class="o">]</span> <span class="o">[</span>other tasks here ...<span class="o">]</span>
+
+Docstring:
+  Say hello.
+
+Options:
+  -c, --caps                     uppercase the output
+  -g STRING, --greeting<span class="o">=</span>STRING   word to use <span class="k">for</span> the greeting
+  -n STRING, --name<span class="o">=</span>STRING       name of the person to greet
+  -v, --version
+</pre></div>
+
+
+<h3>Version Option</h3>
+<p>Implementing a <code>--version</code> option is not quite as simple and comes with a caveat. The basics are that we will add <code>version=False</code> as an option to each of the tasks that calls a new <code>print_version</code> function if True. In order to make this work we cannot have any positional arguments without defaults or we get:</p>
+<div class="highlight"><pre><span class="nv">$ </span>invoke hello --version
+<span class="s1">&#39;hello&#39;</span> did not receive all required positional arguments!
+</pre></div>
+
+
+<p>Also note that we are calling <code>--version</code> on our commands <em>hello</em> and <em>goodbye</em> because <em>invoke</em> itself has a version command:</p>
+<div class="highlight"><pre><span class="nv">$ </span>invoke --version
+Invoke 0.10.1
+</pre></div>
+
+
+<p>The completed implementation of a version command follows:</p>
+<div class="highlight"><pre><span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">print_version</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;1.0.0&#39;</span><span class="p">)</span>
+    <span class="nb">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+
+<span class="nd">@task</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="n">HELP</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">greeting</span><span class="o">=</span><span class="s">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">caps</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Say hello.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">version</span><span class="p">:</span>
+        <span class="n">print_version</span><span class="p">()</span>
+    <span class="n">greet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">greeting</span><span class="p">,</span> <span class="n">caps</span><span class="p">)</span>
+
+<span class="o">...</span>
+</pre></div>
+
+
+<p>Now we are able to ask invoke for the version of our tool:</p>
+<div class="highlight"><pre><span class="nv">$ </span>invoke hello --version
+1.0.0
+</pre></div>
+
+
+<h1>Conclusion</h1>
+<p>To review let's take a look at the final version of each of the tools we created.</p>
+<h3>Argparse</h3>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">argparse</span>
+
+
+<span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="s">&#39;{0}, {1}!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">greeting</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">caps</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--version&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;version&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s">&#39;1.0.0&#39;</span><span class="p">)</span>
+<span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">()</span>
+
+<span class="n">hello_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s">&#39;hello&#39;</span><span class="p">)</span>
+<span class="n">hello_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;name of the person to greet&#39;</span><span class="p">)</span>
+<span class="n">hello_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--greeting&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;word to use for the greeting&#39;</span><span class="p">)</span>
+<span class="n">hello_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--caps&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;uppercase the output&#39;</span><span class="p">)</span>
+<span class="n">hello_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">greet</span><span class="p">)</span>
+
+<span class="n">goodbye_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s">&#39;goodbye&#39;</span><span class="p">)</span>
+<span class="n">goodbye_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;name of the person to greet&#39;</span><span class="p">)</span>
+<span class="n">goodbye_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--greeting&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;word to use for the greeting&#39;</span><span class="p">)</span>
+<span class="n">goodbye_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--caps&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;uppercase the output&#39;</span><span class="p">)</span>
+<span class="n">goodbye_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">greet</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+
+
+<h3>Docopt</h3>
+<div class="highlight"><pre><span class="sd">&quot;&quot;&quot;usage: greet [--help] &lt;command&gt; [&lt;args&gt;...]</span>
+
+<span class="sd">options:</span>
+<span class="sd">  -h --help         Show this screen.</span>
+<span class="sd">  --version         Show the version.</span>
+
+<span class="sd">commands:</span>
+<span class="sd">   hello       Say hello</span>
+<span class="sd">   goodbye     Say goodbye</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">docopt</span> <span class="kn">import</span> <span class="n">docopt</span>
+
+<span class="n">HELLO</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;usage: basic.py hello [options] [--] [&lt;name&gt;]</span>
+
+<span class="s">  -h --help         Show this screen.</span>
+<span class="s">  --caps            Uppercase the output.</span>
+<span class="s">  --greeting=&lt;str&gt;  Greeting to use [default: Hello].</span>
+<span class="s">&quot;&quot;&quot;</span>
+
+<span class="n">GOODBYE</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;usage: basic.py goodbye [options] [--] [&lt;name&gt;]</span>
+
+<span class="s">  -h --help         Show this screen.</span>
+<span class="s">  --caps            Uppercase the output.</span>
+<span class="s">  --greeting=&lt;str&gt;  Greeting to use [default: Goodbye].</span>
+<span class="s">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="s">&#39;{0}, {1}!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;--greeting&#39;</span><span class="p">],</span>
+                                <span class="n">args</span><span class="p">[</span><span class="s">&#39;&lt;name&gt;&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s">&#39;--caps&#39;</span><span class="p">]:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">docopt</span><span class="p">(</span><span class="n">__doc__</span><span class="p">,</span> <span class="n">options_first</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s">&#39;1.0.0&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">arguments</span><span class="p">[</span><span class="s">&#39;&lt;command&gt;&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;hello&#39;</span><span class="p">:</span>
+        <span class="n">greet</span><span class="p">(</span><span class="n">docopt</span><span class="p">(</span><span class="n">HELLO</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">arguments</span><span class="p">[</span><span class="s">&#39;&lt;command&gt;&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;goodbye&#39;</span><span class="p">:</span>
+        <span class="n">greet</span><span class="p">(</span><span class="n">docopt</span><span class="p">(</span><span class="n">GOODBYE</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">exit</span><span class="p">(</span><span class="s">&quot;{0} is not a command. See &#39;options.py --help&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arguments</span><span class="p">[</span><span class="s">&#39;&lt;command&gt;&#39;</span><span class="p">]))</span>
+</pre></div>
+
+
+<h3>Click</h3>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">click</span>
+
+<span class="n">CONTEXT_SETTINGS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">help_option_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;-h&#39;</span><span class="p">,</span> <span class="s">&#39;--help&#39;</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">greeter</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="s">&#39;{0}, {1}!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;greeting&#39;</span><span class="p">],</span>
+                                <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;caps&#39;</span><span class="p">]:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+
+<span class="nd">@click.group</span><span class="p">(</span><span class="n">context_settings</span><span class="o">=</span><span class="n">CONTEXT_SETTINGS</span><span class="p">)</span>
+<span class="nd">@click.version_option</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="s">&#39;1.0.0&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">greet</span><span class="p">():</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@greet.command</span><span class="p">()</span>
+<span class="nd">@click.argument</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--greeting&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;word to use for the greeting&#39;</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--caps&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;uppercase the output&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">greeter</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="nd">@greet.command</span><span class="p">()</span>
+<span class="nd">@click.argument</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--greeting&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;Goodbye&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;word to use for the greeting&#39;</span><span class="p">)</span>
+<span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--caps&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;uppercase the output&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">goodbye</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">greeter</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">greet</span><span class="p">()</span>
+</pre></div>
+
+
+<h3>Invoke</h3>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">invoke</span> <span class="kn">import</span> <span class="n">task</span>
+
+
+<span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">greeting</span><span class="p">,</span> <span class="n">caps</span><span class="p">):</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="s">&#39;{0}, {1}!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">greeting</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">caps</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+
+<span class="n">HELP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;name of the person to greet&#39;</span><span class="p">,</span>
+    <span class="s">&#39;greeting&#39;</span><span class="p">:</span> <span class="s">&#39;word to use for the greeting&#39;</span><span class="p">,</span>
+    <span class="s">&#39;caps&#39;</span><span class="p">:</span> <span class="s">&#39;uppercase the output&#39;</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">print_version</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;1.0.0&#39;</span><span class="p">)</span>
+    <span class="nb">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+
+<span class="nd">@task</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="n">HELP</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">greeting</span><span class="o">=</span><span class="s">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">caps</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Say hello.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">version</span><span class="p">:</span>
+        <span class="n">print_version</span><span class="p">()</span>
+    <span class="n">greet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">greeting</span><span class="p">,</span> <span class="n">caps</span><span class="p">)</span>
+
+
+<span class="nd">@task</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="n">HELP</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">goodbye</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">greeting</span><span class="o">=</span><span class="s">&#39;Goodbye&#39;</span><span class="p">,</span> <span class="n">caps</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Say goodbye.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">version</span><span class="p">:</span>
+        <span class="n">print_version</span><span class="p">()</span>
+    <span class="n">greet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">greeting</span><span class="p">,</span> <span class="n">caps</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Now, to get this out of the way my personal go-to library is click. I have been using it on large, multi-command, complex interfaces for the last year. (Credit goes to <a href="https://twitter.com/kwbeam">@kwbeam</a> for introducing me to click). I prefer the decorator approach and think it lends a very clean, composable interface. That being said, let's evaluate each option fairly.</p>
+<h3>arparse</h3>
+<p><strong>Arparse is the standard library (included with Python) for creating command-line utilities.</strong> For that fact alone it is arguably the most used of the tools examined here. Argparse is also very simple to use as lots of <em>magic</em> (implicit work that happens behind the scenes) is used to construct the interface. For example both arguments and options are defined using the <code>add_arguments</code> method and argparse figures out which is which behind the scenes.</p>
+<h3>docopt</h3>
+<p><strong>If you think writing documentation is great, docopt is for you!</strong> In addition docopt has implementations for <a href="https://github.com/docopt">many other languages</a> meaning you can learn one library and use it across many languages. The downside of docopt is that it is very structured in the way you have to define your command-line interface. (Some might say this is a good thing!)</p>
+<h3>click</h3>
+<p>I've already said that I really like click and have been using it in production for over a year. <strong>I encourage you to read the very complete <a href="http://click.pocoo.org/4/why/">Why Click?</a> documentation.</strong> In fact that documentation is what inspired this blog post! The decorator style implementation of click is very simple to use and since you are decorating the function you want executed it makes it very easy to read the code and figure out what is going to be executed. In addition click supports advanced features like callbacks, command nesting, and more. Click is based on a fork of the now deprecated <a href="https://docs.python.org/2/library/optparse.html">optparse</a> library.</p>
+<h3>invoke</h3>
+<p><strong>Invoke surprised me in this comparison.</strong> I thought that a library designed for task execution might not be able to easily match full command-line libraries but it did! That being said I would not recommend using it for this type of work as you will certainly run into limitations for anything more complex than the example presented here.</p>
             </div>
             <!-- /.entry-content -->
         </article>
