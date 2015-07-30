@@ -156,6 +156,8 @@ def build():
 
 Amazingly to turn this project into a conda package we only need to add a single file, the *meta.yaml*.
 
+**EDIT 07/29/2015**: The build:script commands were incorrect.
+
 ```python
 package:
   name: dtools
@@ -166,8 +168,8 @@ source:
 
 build:
   script:
-    - find . -name "*.pyc" -type f -delete
-    - find . -name "__pycache__" -type d -delete
+    - flake8 . -v --config=.flake8rc
+    - nosetests --verbose
     - python setup.py install
   entry_points:
     - yyyymmdd2doy = conversion.cli:main
