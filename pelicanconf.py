@@ -20,6 +20,11 @@ BOOTSTRAP_THEME = 'cerulean'
 PYGMENTS_STYLE = 'friendly'
 USE_PAGER = True
 
+TWITTER_USERNAME = 'PurdonKyle'
+SHARIFF = True
+SHARIFF_LANG = 'en'
+SHARIFF_TWITTER_VIA = True
+
 GOOGLE_ANALYTICS = 'UA-56650422-2'
 
 CUSTOM_CSS = 'static/custom.css'
