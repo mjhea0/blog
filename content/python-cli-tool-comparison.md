@@ -27,7 +27,7 @@ invoke (0.10.1)
 
 # Command-Line Example
 
-The command-line utility that we are creating will have the following interface:
+The command-line application that we are creating will have the following interface:
 
 `python [file].py [command] [options] NAME`
 
@@ -55,7 +55,7 @@ $ python [file].py hello --greeting=Wazzup --caps Kyle
 WAZZUP, KYLE!
 ```
 
-This command-line utility breaks down into a few things the library we choose will need to implement. This article will compare each libraries method for implementing the following features:
+This command-line application breaks down into a few things the library we choose will need to implement. This article will compare each libraries method for implementing the following features:
 
 1. Commands (hello, goodbye)
 2. Arguments (name)
@@ -196,11 +196,11 @@ Options:
   --help  Show this message and exit.
 ```
 
-Even at this point you can see that we have very different approaches to constructing a basic command-line utility. Next let's add the *NAME* argument, and the logic to print the result to each tool.
+Even at this point you can see that we have very different approaches to constructing a basic command-line application. Next let's add the *NAME* argument, and the logic to print the result to each tool.
 
 # Arguments
 
-In this section I will be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Arguments (a.k.a positional arguments) are required inputs to a command-line utility. In this case we are adding a required "name" argument so that the tool can greet a specific person.
+In this section I will be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Arguments (a.k.a positional arguments) are required inputs to a command-line application. In this case we are adding a required "name" argument so that the tool can greet a specific person.
 
 ### Argparse
 
@@ -341,7 +341,7 @@ Options:
 
 # Flags/Options
 
-In this section I will again be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Options are non-required inputs that can be given to alter the execution of a command-line utility. Flags are a boolean only (True/False) subset of options. For example: `--foo=bar` will pass *bar* as the value for the *foo* option, `--baz` (if defined as a flag) will pass the value of True is the option is given, or False if not.
+In this section I will again be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Options are non-required inputs that can be given to alter the execution of a command-line application. Flags are a boolean only (True/False) subset of options. For example: `--foo=bar` will pass *bar* as the value for the *foo* option, `--baz` (if defined as a flag) will pass the value of True is the option is given, or False if not.
 
 For this example we are going to add the `--greeting=[greeting]` option, and the `--caps` flag. The *greeting* option will have default values of "Hello" and "Goodbye" (for hello, and goodbye commands) and allow the user to pass in a custom greeting. For example given `--greeting=Wazzup` the tool will respond with *Wazzup, [name]!*. The `--caps` flag will uppercase the entire response if given. For example given `--caps` the tool will respond with *HELLO, [NAME]!*.
 
@@ -782,11 +782,11 @@ Options:
   -h, --help       Show this message and exit.
 ```
 
-With that we have completed the construction of the command-line utility we set out to build. Before we conclude let's take a look at another possible option.
+With that we have completed the construction of the command-line application we set out to build. Before we conclude let's take a look at another possible option.
 
 # Invoke
 
-Can we use [invoke](https://invoke.readthedocs.org/en/latest/), a simple task running library, to build the greeter command-line utility? Let's find out!
+Can we use [invoke](https://invoke.readthedocs.org/en/latest/), a simple task running library, to build the greeter command-line application? Let's find out!
 
 To start let's begin with the simplest version of the greeter:
 
@@ -1144,7 +1144,7 @@ I've already said that I really like click and have been using it in production 
 
 # Bonus: Packaging Command-Line Applications
 
-Since not everyone is packaging up there python source with [setuptools](https://pypi.python.org/pypi/setuptools) (or other solutions) I decided not to make this a core component of the article. In addition I don't want to cover *packaging* as a complete topic. If you want to learn more about packaging with setuptools [go here](https://packaging.python.org/en/latest/) or with conda [go here](http://conda.pydata.org/docs/building/build.html) or you can read my previous [blog post](http://kylepurdon.com/blog/packaging-python-basics-with-continuum-analytics-conda.html) on conda packaging. **What I will cover here is how to use the entry_points option to make a command-line utility and executable command on install**.
+Since not everyone is packaging up there python source with [setuptools](https://pypi.python.org/pypi/setuptools) (or other solutions) I decided not to make this a core component of the article. In addition I don't want to cover *packaging* as a complete topic. If you want to learn more about packaging with setuptools [go here](https://packaging.python.org/en/latest/) or with conda [go here](http://conda.pydata.org/docs/building/build.html) or you can read my previous [blog post](http://kylepurdon.com/blog/packaging-python-basics-with-continuum-analytics-conda.html) on conda packaging. **What I will cover here is how to use the entry_points option to make a command-line application an executable command on install**.
 
 ### Entry Point Basics
 
