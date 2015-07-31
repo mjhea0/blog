@@ -55,15 +55,18 @@ $ python [file].py hello --greeting=Wazzup --caps Kyle
 WAZZUP, KYLE!
 ```
 
-This simple command-line utility breaks down into a few things the library we choose will need to implement:
+This command-line utility breaks down into a few things the library we choose will need to implement. This article will compare each libraries method for implementing the following features:
 
 1. Commands (hello, goodbye)
 2. Arguments (name)
-3. Flags/Options (--greeting, --caps)
+3. Options/Flags (--greeting=<str\>, --caps)
 
-In addition automated help messages are important, and to throw a wrench in lets say we also want a `-v/--version` option that will print the version number and quit. As you would expect argparse, docopt, and click implement all of these features (as any simple command-line library would). This means that this comparison is mostly going to break down into a stylistic preference. I'll leave my personal preferences for the end!
+In addition automated help messages are important, and to throw a wrench in lets say we also want a `-v/--version` option that will print the version number and quit. As you would expect argparse, docopt, and click implement all of these features (as any complete command-line library would). This fact means that the actual implementation of these features is what we will compare. Each library takes a very different approach (argparse=standard, docopt=docstrings, click=decorators) that will lend to a very interesting comparison.
 
-I've been curious about using task-runner libraries like [fabric](https://fabric.readthedocs.org/en/latest/) and it's python3 replacement [invoke](https://invoke.readthedocs.org/en/latest/) to create simple command-line interfaces so at the end (after comparing argparse, docopt, and click) I will try and put the same interface together with invoke.
+**Bonus Sections**
+
+1. I've been curious about using task-runner libraries like [fabric](https://fabric.readthedocs.org/en/latest/) and it's python3 replacement [invoke](https://invoke.readthedocs.org/en/latest/) to create simple command-line interfaces I will try and put the same interface together with invoke.
+2. A few extra steps are needed when packaging command-line applications, i'll cover those as well!
 
 # Commands
 
