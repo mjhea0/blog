@@ -20,7 +20,7 @@
         <meta property="og:title" content="Comparing Python Command-Line Parsing Libraries (Argparse, Docopt, and Click)"/>
         <meta property="og:url" content="http://kylepurdon.com/blog/drafts/comparing-python-command-line-parsing-libraries-argparse-docopt-and-click.html"/>
         <meta property="og:description" content="A comparison of Python command-line utility libraries (argparse, docopt, and click)."/>
-        <meta property="article:published_time" content="2015-07-30" />
+        <meta property="article:published_time" content="2015-08-01" />
             <meta property="article:section" content="Software, Tools" />
             <meta property="article:tag" content="python" />
             <meta property="article:tag" content="development" />
@@ -60,6 +60,7 @@
                     <li><a href="http://kylepurdon.com">Home</a></li>
                     <li><a href="http://kylepurdon.com/blog">Blog</a></li>
                     <li><a href="http://kylepurdon.com/about.html">About</a></li>
+                    <li><a href="http://kylepurdon.com/examples.html">Examples</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://kylepurdon.com/blog/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
@@ -90,7 +91,7 @@
 <footer class="post-info">
     <span class="label label-default">Date</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2015-07-30T00:00:00-06:00"> Thu 30 July 2015</time>
+        <i class="fa fa-calendar"></i><time datetime="2015-08-01T00:00:00-06:00"> Sat 01 August 2015</time>
     </span>
 
 
@@ -104,7 +105,7 @@
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>About a year ago I began a job where building libraries with command-line interfaces was a very common occurrence. At that time I had used <a href="https://docs.python.org/3/library/argparse.html">argparse</a> quite a bit and wanted to explore what other options were available. I found that the most popular alternatives available were <a href="http://click.pocoo.org/4/">click</a> and <a href="http://docopt.org/">docopt</a>. During my exploration I also found that other than each libraries "why use me" section there was not much available for a complete comparison of the three libraries. Now there is! If you want to you can <a href="https://github.com/kpurdon/greeters">head directly to the source</a> though it really won't do much good without the comparisons and step-by-step construction presented in this article. I'll keep my opinion out of the construction and comparison (as much as possible) and present my preference in the conclusion.</p>
+                <p>About a year ago I began a job where building command-line applications was a common occurrence. At that time I had used <a href="https://docs.python.org/3/library/argparse.html">argparse</a> quite a bit and wanted to explore what other options were available. I found that the most popular alternatives available were <a href="http://click.pocoo.org/4/">click</a> and <a href="http://docopt.org/">docopt</a>. During my exploration I also found that other than each libraries "why use me" section there was not much available for a complete comparison of the three libraries. Now there is! If you want to you can <a href="https://github.com/kpurdon/greeters">head directly to the source</a> though it really won't do much good without the comparisons and step-by-step construction presented in this article. I'll keep my opinion out of the construction and comparison (as much as possible) and present my preference in the conclusion.</p>
 <p>I'll be using the following versions in the comparisons during this article:</p>
 <div class="highlight"><pre><span class="nv">$ </span>python --version
 Python 3.4.3 :: Continuum Analytics, Inc.
@@ -123,7 +124,7 @@ invoke <span class="o">(</span>0.10.1<span class="o">)</span>
 
 
 <h1>Command-Line Example</h1>
-<p>The command-line utility that we are creating will have the following interface:</p>
+<p>The command-line application that we are creating will have the following interface:</p>
 <p><code>python [file].py [command] [options] NAME</code></p>
 <p><strong>Basic Usage</strong></p>
 <div class="highlight"><pre><span class="nv">$ </span>python <span class="o">[</span>file<span class="o">]</span>.py hello Kyle
@@ -149,14 +150,18 @@ WAZZUP, KYLE!
 </pre></div>
 
 
-<p>This simple command-line utility breaks down into a few things the library we choose will need to implement:</p>
+<p>This command-line application breaks down into a few things the library we choose will need to implement. This article will compare each libraries method for implementing the following features:</p>
 <ol>
 <li>Commands (hello, goodbye)</li>
 <li>Arguments (name)</li>
-<li>Flags/Options (--greeting, --caps)</li>
+<li>Options/Flags (--greeting=&lt;str>, --caps)</li>
 </ol>
-<p>In addition automated help messages are important, and to throw a wrench in lets say we also want a <code>-v/--version</code> option that will print the version number and quit. As you would expect argparse, docopt, and click implement all of these features (as any simple command-line library would). This means that this comparison is mostly going to break down into a stylistic preference. I'll leave my personal preferences for the end!</p>
-<p>I've been curious about using task-runner libraries like <a href="https://fabric.readthedocs.org/en/latest/">fabric</a> and it's python3 replacement <a href="https://invoke.readthedocs.org/en/latest/">invoke</a> to create simple command-line interfaces so at the end (after comparing argparse, docopt, and click) I will try and put the same interface together with invoke.</p>
+<p>In addition automated help messages are important, and to throw a wrench in lets say we also want a <code>-v/--version</code> option that will print the version number and quit. As you would expect argparse, docopt, and click implement all of these features (as any complete command-line library would). This fact means that the actual implementation of these features is what we will compare. Each library takes a very different approach (argparse=standard, docopt=docstrings, click=decorators) that will lend to a very interesting comparison.</p>
+<p><strong>Bonus Sections</strong></p>
+<ol>
+<li>I've been curious about using task-runner libraries like <a href="https://fabric.readthedocs.org/en/latest/">fabric</a> and it's python3 replacement <a href="https://invoke.readthedocs.org/en/latest/">invoke</a> to create simple command-line interfaces I will try and put the same interface together with invoke.</li>
+<li>A few extra steps are needed when packaging command-line applications, i'll cover those as well!</li>
+</ol>
 <h1>Commands</h1>
 <p>Let's begin by setting up the basic skeleton (no arguments or options) with each library.</p>
 <h3>Argparse</h3>
@@ -276,9 +281,9 @@ Options:
 </pre></div>
 
 
-<p>Even at this point you can see that we have very different approaches to constructing a basic command-line utility. Next let's add the <em>NAME</em> argument, and the logic to print the result to each tool.</p>
+<p>Even at this point you can see that we have very different approaches to constructing a basic command-line application. Next let's add the <em>NAME</em> argument, and the logic to print the result to each tool.</p>
 <h1>Arguments</h1>
-<p>In this section I will be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Arguments (a.k.a positional arguments) are required inputs to a command-line utility. In this case we are adding a required "name" argument so that the tool can greet a specific person.</p>
+<p>In this section I will be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Arguments (a.k.a positional arguments) are required inputs to a command-line application. In this case we are adding a required "name" argument so that the tool can greet a specific person.</p>
 <h3>Argparse</h3>
 <p>To add an argument to a subcommand we use the <code>add_argument</code> method. And in order to execute the correct logic when a command is called we use the <code>set_defaults</code> method to set a default function. Finally we execute the default function by calling <code>args.func(args)</code> after we parse the arguments at runtime.</p>
 <div class="highlight"><pre><span class="kn">import</span> <span class="nn">argparse</span>
@@ -410,7 +415,7 @@ Options:
 
 
 <h1>Flags/Options</h1>
-<p>In this section I will again be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Options are non-required inputs that can be given to alter the execution of a command-line utility. Flags are a boolean only (True/False) subset of options. For example: <code>--foo=bar</code> will pass <em>bar</em> as the value for the <em>foo</em> option, <code>--baz</code> (if defined as a flag) will pass the value of True is the option is given, or False if not.</p>
+<p>In this section I will again be adding new logic to the same code shown in the previous section. I'll add comments to new lines stating there purpose. Options are non-required inputs that can be given to alter the execution of a command-line application. Flags are a boolean only (True/False) subset of options. For example: <code>--foo=bar</code> will pass <em>bar</em> as the value for the <em>foo</em> option, <code>--baz</code> (if defined as a flag) will pass the value of True is the option is given, or False if not.</p>
 <p>For this example we are going to add the <code>--greeting=[greeting]</code> option, and the <code>--caps</code> flag. The <em>greeting</em> option will have default values of "Hello" and "Goodbye" (for hello, and goodbye commands) and allow the user to pass in a custom greeting. For example given <code>--greeting=Wazzup</code> the tool will respond with <em>Wazzup, [name]!</em>. The <code>--caps</code> flag will uppercase the entire response if given. For example given <code>--caps</code> the tool will respond with <em>HELLO, [NAME]!</em>.</p>
 <h3>Argparse</h3>
 <div class="highlight"><pre><span class="kn">import</span> <span class="nn">argparse</span>
@@ -818,9 +823,9 @@ Options:
 </pre></div>
 
 
-<p>With that we have completed the construction of the command-line utility we set out to build. Before we conclude let's take a look at another possible option.</p>
+<p>With that we have completed the construction of the command-line application we set out to build. Before we conclude let's take a look at another possible option.</p>
 <h1>Invoke</h1>
-<p>Can we use <a href="https://invoke.readthedocs.org/en/latest/">invoke</a>, a simple task running library, to build the greeter command-line utility? Let's find out!</p>
+<p>Can we use <a href="https://invoke.readthedocs.org/en/latest/">invoke</a>, a simple task running library, to build the greeter command-line application? Let's find out!</p>
 <p>To start let's begin with the simplest version of the greeter:</p>
 <p><em>tasks.py</em></p>
 <div class="highlight"><pre><span class="kn">from</span> <span class="nn">invoke</span> <span class="kn">import</span> <span class="n">task</span>
@@ -1149,7 +1154,7 @@ Invoke 0.10.1
 <h3>invoke</h3>
 <p><strong>Invoke surprised me in this comparison.</strong> I thought that a library designed for task execution might not be able to easily match full command-line libraries but it did! That being said I would not recommend using it for this type of work as you will certainly run into limitations for anything more complex than the example presented here.</p>
 <h1>Bonus: Packaging Command-Line Applications</h1>
-<p>Since not everyone is packaging up there python source with <a href="https://pypi.python.org/pypi/setuptools">setuptools</a> (or other solutions) I decided not to make this a core component of the article. In addition I don't want to cover <em>packaging</em> as a complete topic. If you want to learn more about packaging with setuptools <a href="https://packaging.python.org/en/latest/">go here</a> or with conda <a href="http://conda.pydata.org/docs/building/build.html">go here</a> or you can read my previous <a href="http://kylepurdon.com/blog/packaging-python-basics-with-continuum-analytics-conda.html">blog post</a> on conda packaging. <strong>What I will cover here is how to use the entry_points option to make a command-line utility and executable command on install</strong>.</p>
+<p>Since not everyone is packaging up there python source with <a href="https://pypi.python.org/pypi/setuptools">setuptools</a> (or other solutions) I decided not to make this a core component of the article. In addition I don't want to cover <em>packaging</em> as a complete topic. If you want to learn more about packaging with setuptools <a href="https://packaging.python.org/en/latest/">go here</a> or with conda <a href="http://conda.pydata.org/docs/building/build.html">go here</a> or you can read my previous <a href="http://kylepurdon.com/blog/packaging-python-basics-with-continuum-analytics-conda.html">blog post</a> on conda packaging. <strong>What I will cover here is how to use the entry_points option to make a command-line application an executable command on install</strong>.</p>
 <h3>Entry Point Basics</h3>
 <p>An <a href="https://packaging.python.org/en/latest/distributing.html?highlight=entry_points#entry-points">entry_point</a> is essentially a map to a single function in your code that will be given a command on your systems PATH. An entry_point has the form: <code>command = package.module:function</code></p>
 <p>The best way to explain this is to just look at our <em>click</em> example and add an entry point.</p>
