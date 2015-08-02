@@ -9,7 +9,8 @@ SITEURL = 'http://kylepurdon.com/blog'
 
 MENUITEMS = (('Home', 'http://kylepurdon.com'),
              ('Blog', 'http://kylepurdon.com/blog'),
-             ('About', 'http://kylepurdon.com/about.html'))
+             ('About', 'http://kylepurdon.com/about.html'),
+             ('Examples', 'http://kylepurdon.com/examples.html'))
 
 DISPLAY_CATEGORIES_ON_MENU = False
 DISPLAY_TAGS_ON_SIDEBAR = False
