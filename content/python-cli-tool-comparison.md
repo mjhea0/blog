@@ -61,7 +61,13 @@ This command-line application breaks down into a few things the library we choos
 2. Arguments (name)
 3. Options/Flags (--greeting=<str\>, --caps)
 
-In addition automated help messages are important, and to throw a wrench in lets say we also want a `-v/--version` option that will print the version number and quit. As you would expect argparse, docopt, and click implement all of these features (as any complete command-line library would). This fact means that the actual implementation of these features is what we will compare. Each library takes a very different approach (argparse=standard, docopt=docstrings, click=decorators) that will lend to a very interesting comparison.
+Additional important features:
+
+1. Version Printing (`-v/--version`)
+2. Automated Help Messages
+3. Error Handling
+
+As you would expect argparse, docopt, and click implement all of these features (as any complete command-line library would). This fact means that the actual implementation of these features is what we will compare. Each library takes a very different approach (argparse=standard, docopt=docstrings, click=decorators) that lends a very interesting comparison.
 
 **Bonus Sections**
 
@@ -459,14 +465,14 @@ commands:
 
 from docopt import docopt
 
-HELLO = """usage: basic.py hello [options] [--] [<name>]
+HELLO = """usage: basic.py hello [options] [<name>]
 
   -h --help         Show this screen.
   --caps            Uppercase the output.
   --greeting=<str>  Greeting to use [default: Hello].
 """
 
-GOODBYE = """usage: basic.py goodbye [options] [--] [<name>]
+GOODBYE = """usage: basic.py goodbye [options] [<name>]
 
   -h --help         Show this screen.
   --caps            Uppercase the output.
@@ -507,7 +513,7 @@ commands:
    goodbye     Say goodbye
 
 $ python docopt/options.py hello --help
-usage: basic.py hello [options] [--] [<name>]
+usage: basic.py hello [options] [<name>]
 
   -h --help         Show this screen.
   --caps            Uppercase the output.
@@ -723,7 +729,7 @@ This section is where docopt gets it's chance to shine. Because we wrote the doc
 
 ```bash
 $ python docopt/help.py hello -h
-usage: basic.py hello [options] [--] [<name>]
+usage: basic.py hello [options] [<name>]
 
   -h --help         Show this screen.
   --caps            Uppercase the output.
@@ -782,7 +788,103 @@ Options:
   -h, --help       Show this message and exit.
 ```
 
-With that we have completed the construction of the command-line application we set out to build. Before we conclude let's take a look at another possible option.
+# Error Handling
+
+Error handling is an important part of any application. This section will explore the default error handling of each application and implement additional logic if needed. We'll explore two error cases:
+
+1. Not enough required arguments given.
+2. Invalid options/flags fiven.
+3. A flag with a value is given.
+
+### Argparse
+
+```bash
+$ python argparse/final.py hello
+usage: final.py hello [-h] [--greeting GREETING] [--caps] name
+final.py hello: error: the following arguments are required: name
+
+$ python argparse/final.py --badoption hello Kyle
+usage: final.py [-h] [--version] {hello,goodbye} ...
+final.py: error: unrecognized arguments: --badoption
+
+$ python argparse/final.py hello --caps=notanoption Kyle
+usage: final.py hello [-h] [--greeting GREETING] [--caps] name
+final.py hello: error: argument --caps: ignored explicit argument 'notanoption'
+```
+
+Not very exciting, as argparse handles all of our error cases out of the box.
+
+### Docopt
+
+```bash
+$ python docopt/final.py hello
+Hello, None!
+
+$ python docopt/final.py hello --badoption Kyle
+usage: basic.py hello [options] [<name>]
+```
+
+Unfortunatly we have a bit of work to get docopt to an acceptable minimum level of error handling. The reccomended method for validation in docopt is the [schema](https://pypi.python.org/pypi/schema) module. In addition they provide a very basic [validation example](https://github.com/docopt/docopt/blob/master/examples/validation_example.py). The following is our application with schema validation:
+
+```python
+...
+from schema import Schema, SchemaError, Optional
+...
+    schema = Schema({
+        Optional('hello'): bool,
+        Optional('goodbye'): bool,
+        '<name>': str,
+        Optional('--caps'): bool,
+        Optional('--help'): bool,
+        Optional('--greeting'): str
+    })
+
+    def validate(args):
+        try:
+            args = schema.validate(args)
+            return args
+        except SchemaError as e:
+            exit(e)
+
+    if arguments['<command>'] == 'hello':
+        greet(validate(docopt(HELLO)))
+    elif arguments['<command>'] == 'goodbye':
+        greet(validate(docopt(GOODBYE)))
+...
+```
+
+With this validation in place we now get some error messages.
+
+```bash
+$ python docopt/validation.py hello
+None should be instance of <class 'str'>
+
+$ python docopt/validation.py hello --greeting Kyle
+None should be instance of <class 'str'>
+
+$ python docopt/validation.py hello --caps=notanoption Kyle
+--caps must not have an argument
+usage: basic.py hello [options] [<name>]
+```
+
+While these messages are not very descriptive and may be hard to debug for larger applications it's better than no validation at all. The schema module does provide other mechanisms for adding more descriptive error messages but I wont cover those here.
+
+### Click
+
+```bash
+$ python click/final.py hello
+Usage: final.py hello [OPTIONS] NAME
+
+Error: Missing argument "name".
+
+$ python click/final.py hello --badoption Kyle
+Error: no such option: --badoption
+
+$ python click/final.py hello --caps=notanoption Kyle
+Error: --caps option does not take a value
+```
+
+Just like argparse click handles error input by default. With that we have completed the construction of the command-line application we set out to build. Before we conclude let's take a look at another possible option.
 
 # Invoke
 
@@ -1003,15 +1105,16 @@ commands:
 """
 
 from docopt import docopt
+from schema import Schema, SchemaError, Optional
 
-HELLO = """usage: basic.py hello [options] [--] [<name>]
+HELLO = """usage: basic.py hello [options] [<name>]
 
   -h --help         Show this screen.
   --caps            Uppercase the output.
   --greeting=<str>  Greeting to use [default: Hello].
 """
 
-GOODBYE = """usage: basic.py goodbye [options] [--] [<name>]
+GOODBYE = """usage: basic.py goodbye [options] [<name>]
 
   -h --help         Show this screen.
   --caps            Uppercase the output.
@@ -1030,10 +1133,26 @@ def greet(args):
 if __name__ == '__main__':
     arguments = docopt(__doc__, options_first=True, version='1.0.0')
 
+    schema = Schema({
+        Optional('hello'): bool,
+        Optional('goodbye'): bool,
+        '<name>': str,
+        Optional('--caps'): bool,
+        Optional('--help'): bool,
+        Optional('--greeting'): str
+    })
+
+    def validate(args):
+        try:
+            args = schema.validate(args)
+            return args
+        except SchemaError as e:
+            exit(e)
+
     if arguments['<command>'] == 'hello':
-        greet(docopt(HELLO))
+        greet(validate(docopt(HELLO)))
     elif arguments['<command>'] == 'goodbye':
-        greet(docopt(GOODBYE))
+        greet(validate(docopt(GOODBYE)))
     else:
         exit("{0} is not a command. See 'options.py --help'.".format(arguments['<command>']))
 ```
