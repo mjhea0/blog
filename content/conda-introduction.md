@@ -1,6 +1,6 @@
 title: Using Continuum Analytics Conda as a replacement for virtualenv, pyenv, and more!
 date: 2015-07-26 11:30
-category: Software, Tools
+category: Software
 tags: python, development, conda
 summary: Continuum Analytics Conda can be used as a replacement for virtualenv, pyenv, and more. This post will show you how to adopt conda for the basics of python development.
 
