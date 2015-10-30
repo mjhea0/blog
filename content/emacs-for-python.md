@@ -136,6 +136,10 @@ In addition let's say we want to run this script. In something like IDLE or Subl
 
 Often we'll want to be running a virtual environment and executing our code using the packages installed there. To use a virtual environment in emacs we type `M-x pyvenv-activate` and follow the prompts. You can deactivate a virtualenv with `M-x pyvenv-deactivate`. With this all of the basics of a Python IDE in emacs have been covered. Now let's put some icing on this cake!
 
+Finally elpy provides an interface for debugging the environment and any issues you may be having with elpy itself. By typing `M-x elpy-config` we get the following dialog which provides valuable debugging information.
+
+![emacs elpy config](images/emacs-elpy-config.png)
+
 # Additional Python Features
 
 In addition to all the basic IDE features described above emacs provides us some additional features for Python. While this is not an exhaustive list  pep8 compliance (with autopep8) and integration with IPython/Jupyter will be covered. However before that I want to cover a quick syntax checking preference.
