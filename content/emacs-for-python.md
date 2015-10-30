@@ -4,7 +4,7 @@ Category: Software, Editors
 Tags: python, development
 Summary: Emacs is more than a capable IDE for Python.
 
-A recent article [VIM and Python - a Match Made in Heaven](https://realpython.com/blog/python/vim-and-python-a-match-made-in-heaven/) was posted that showed how capable Vim is for Python development. I want to present the most common alternative to Vim, Emacs, as a powerful Python development environment.
+A recent series of articles [Setting Up Sublime Text 3 for Full Stack Python Development](https://realpython.com/blog/python/setting-up-sublime-text-3-for-full-stack-python-development/) and [VIM and Python - a Match Made in Heaven](https://realpython.com/blog/python/vim-and-python-a-match-made-in-heaven/) were posted here that showed how capable Sublime and Vim are for Python development. Here I present another editor, Emacs, as a powerful Python development environment. **While it's an undisputable fact that emacs is the best editor I'll keep an open mind and present Emacs from a fresh installation to a complete Python IDE so that you can make an informed decision when choosing your go-to Python IDE.**
 
 # Installation and Emacs Basics
 
@@ -134,11 +134,11 @@ In addition let's say we want to run this script. In something like IDLE or Subl
 
 ![emacs elpy execute](images/emacs-elpy-execute.png)
 
-Often we'll want to be running a virtual environment and executing our code using the packages installed there. To use a virtual environment in emacs we type `M-x pyvenv-activate` and follow the prompts. You can deactivate a virtualenv with `M-x pyvenv-deactivate`. With this all of the basics of a Python IDE in emacs have been covered. Now let's put some icing on this cake!
-
-Finally elpy provides an interface for debugging the environment and any issues you may be having with elpy itself. By typing `M-x elpy-config` we get the following dialog which provides valuable debugging information.
+Often we'll want to be running a virtual environment and executing our code using the packages installed there. To use a virtual environment in emacs we type `M-x pyvenv-activate` and follow the prompts. You can deactivate a virtualenv with `M-x pyvenv-deactivate`. If you have an issues elpy provides an interface for debugging the environment and any issues you may be having with elpy itself. By typing `M-x elpy-config` we get the following dialog which provides valuable debugging information.
 
 ![emacs elpy config](images/emacs-elpy-config.png)
+
+With this all of the basics of a Python IDE in emacs have been covered. Now let's put some icing on this cake!
 
 # Additional Python Features
 
