@@ -96,6 +96,10 @@ The following image shows some other basic features that come with emacs out of 
 
 ![emacs features](images/emacs-features.png)
 
+One of my favorite simple features of emacs is being able to do a quick recursive-grep search. For example say I want to find all instances of the word *python* in any *.md* (markdown) in a given directory. `M-x rgrep`.
+
+![emacs rgrep](images/emacs-rgrep.gif)
+
 With this basic configuration complete we can begin to dive into configuring Python!
 
 # Elpy (Emacs Lisp Python Environment)
