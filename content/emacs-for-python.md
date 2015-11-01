@@ -92,6 +92,10 @@ Now that we have basic configuration we can restart emacs and see the changes. I
 
 ![emacs themed](images/emacs-themed.png)
 
+The following image shows some other basic features that come with emacs out of the box including power file searching, split layouts, powerful in-file and directory grep searching and much more.
+
+![emacs features](images/emacs-features.png)
+
 With this basic configuration complete we can begin to dive into configuring Python!
 
 # Elpy (Emacs Lisp Python Environment)
@@ -233,7 +237,7 @@ Now that all of the basic Python IDE features (and some really awesome extras) h
 
 ## Other Modes
 
-I wanted to note that one of the major benefits of using emacs over a python specific IDE is that you get compatibility with much more than just Python. In a single day I often work with Python, Golang, JavaScript, Markdown, JSON, and more. Never leaving emacs and having complex support for all of these languages in a single editor is very efficient. You can check out my personal emacs configuration [here](https://github.com/kpurdon/kp-emacs). It includes support for:
+I want to note that one of the major benefits of using emacs over a python specific IDE is that you get compatibility with much more than just Python. In a single day I often work with Python, Golang, JavaScript, Markdown, JSON, and more. Never leaving emacs and having complex support for all of these languages in a single editor is very efficient. You can check out my personal emacs configuration [here](https://github.com/kpurdon/kp-emacs). It includes support for:
 
 * Python
 * Golang
