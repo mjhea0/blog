@@ -4,7 +4,7 @@ Category: Software, Editors
 Tags: python, development
 Summary: Emacs is more than a capable IDE for Python.
 
-A recent series of articles [Setting Up Sublime Text 3 for Full Stack Python Development](https://realpython.com/blog/python/setting-up-sublime-text-3-for-full-stack-python-development/) and [VIM and Python - a Match Made in Heaven](https://realpython.com/blog/python/vim-and-python-a-match-made-in-heaven/) were posted here that showed how capable Sublime and Vim are for Python development. Here I present another editor, Emacs, as a powerful Python development environment. **While it's an undisputable fact that emacs is the best editor I'll keep an open mind and present Emacs from a fresh installation to a complete Python IDE so that you can make an informed decision when choosing your go-to Python IDE.**
+A recent series of posts [Setting Up Sublime Text 3 for Full Stack Python Development](https://realpython.com/blog/python/setting-up-sublime-text-3-for-full-stack-python-development/) and [VIM and Python - a Match Made in Heaven](https://realpython.com/blog/python/vim-and-python-a-match-made-in-heaven/) were posted here that showed how capable Sublime and Vim are for Python development. Here I present another editor, Emacs, as a powerful Python development environment. **While it's an undisputable fact that emacs is the best editor I'll keep an open mind and present Emacs from a fresh installation to a complete Python IDE so that you can make an informed decision when choosing your go-to Python IDE.**
 
 # Installation and Emacs Basics
 
@@ -40,11 +40,13 @@ In the rest of the post key entries like `C-x C-s` (save) will be shown. This me
 
 One of the great benefits of emacs is the simplicity and power of configuration. The core of emacs configuration is the file `init.el` (el is emacs-lisp). For a UNIX environment this file should be put in `$HOME/.emacs.d/init.el` and for windows (if the *HOME* environment variable is not set) `C:/.emacs.d/init.el`. Configuration snippets will be presented throughout the post and a complete emacs configuration for Python will be included in the conclusion.
 
-The core of customizing emacs is installing packages from various repositories. The primary emacs package repository is [melpa](https://melpa.org/#/). All of the packages presented in this article will be installed from this repository.
+The core of customizing emacs is installing packages from various repositories. The primary emacs package repository is [melpa](https://melpa.org/#/). All of the packages presented in this post will be installed from this repository.
 
 ## Styling (Themes & More)
 
-To start with some basic emacs customization the complete configuration file needed to install and apply a custom theme. My prefered theme is [material](https://github.com/cpaulik/emacs-material-theme) so we'll be using that for the rest of the post.
+To begin the following configuration snippet provides package installation and installs a theme package. My prefered theme is [material](https://github.com/cpaulik/emacs-material-theme) so we'll be using that for the rest of the post.
+
+> Configuration snippets will be presented throughout the post and a complete emacs configuration for Python will be included in the conclusion.
 
 ```emacs-lisp
 ;; init.el --- emacs configuration
@@ -80,7 +82,7 @@ To start with some basic emacs customization the complete configuration file nee
 ;; init.el ends here
 ```
 
-This config file includes the basics needed to install packages automatically and set a few options. The first section installs two packages (better-defaults and material-theme). better-defaults is just a collection of minor changes to the defaults in emacs and I always use it as a base. material-theme is the package that provides the material theme I mentioned. The second section (BASIC CUSTOMIZATION) does three things:
+The first section of the configuration snippet `;; INSTALL PACKAGES` installs two packages called *better-defaults* and *material-theme*. The *better-defaults* package is a collection of minor changes to the emacs defaults that makes a great base to begin customizing from. The *material-theme* package provides a customized set of styles. The second section `;; BASIC CUSTOMIZATION` does three things:
 
 1. Disables the startup message (this is the screen with all the tutorial information). You may want to leave this out until you are more comfortable with emacs.
 2. Loads the material theme.
@@ -88,13 +90,17 @@ This config file includes the basics needed to install packages automatically an
 
 Enabling something globally means that it will apply to all buffers (open items) in emacs. This means if you open a python file, markdown file, and text file they will all have line numbers shown. You can enable things per mode (python-mode, markdown-mode, text-mode) and this will be shown later when setting up Python.
 
-Now that we have basic configuration we can restart emacs and see the changes. If you placed the `init.el` file in the correct default location it will automatically be picked up. As an alternative you can start emacs with `emacs -q --load <path to init.el>`. When loaded our initial emacs window looks a bit nicer!
+Now that we have a complete (basic) configuration file we can restart emacs and see the changes. If you placed the `init.el` file in the correct default location it will automatically be picked up.
+
+> For a UNIX environment this file should be put in `$HOME/.emacs.d/init.el` and for windows (if the *HOME* environment variable is not set) `C:/.emacs.d/init.el`.
+
+As an alternative you can start emacs from the command-line with `emacs -q --load <path to init.el>`. When loaded our initial emacs window looks a bit nicer!
 
 ![emacs themed](images/emacs-themed.png)
 
-The following image shows some other basic features that come with emacs out of the box including power file searching, split layouts, powerful in-file and directory grep searching and much more.
+The following image shows some other basic features that come with emacs out of the box including simple file searching and split layouts.
 
-![emacs features](images/emacs-features.png)
+![emacs features](images/emacs-simple-features.png)
 
 One of my favorite simple features of emacs is being able to do a quick recursive-grep search. For example say I want to find all instances of the word *python* in any *.md* (markdown) in a given directory. `M-x rgrep`.
 
@@ -116,18 +122,22 @@ Emacs includes a python-mode out of the box that provides indentation and syntax
 
 To install and enable elpy we need to add a bit of configuration and install `flake8` and `jedi` using your prefered method for installing Python packages (pip or conda for example).
 
+> Configuration snippets will be presented throughout the post and a complete emacs configuration for Python will be included in the conclusion.
+
+The following will install the elpy package:
+
 ```emacs-lisp
 (defvar myPackages
   '(better-defaults
     elpy ;; add the elpy package
     material-theme))
 ```
-and
+and enable it:
 ```emacs-lisp
 (elpy-enable)
 ```
 
-Remember that a complete configuration including all the snippets I present will be included at the completion of the post. With the new configuration we can restart emacs and open up a Python file to see the new mode in action.
+With the new configuration we can restart emacs and open up a Python file to see the new mode in action.
 
 ![emacs elpy basic](images/emacs-elpy-basic.png)
 
