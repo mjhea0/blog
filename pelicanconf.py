@@ -17,8 +17,8 @@ DISPLAY_TAGS_ON_SIDEBAR = False
 DISPLAY_CATEGORIES_ON_SIDEBAR = True
 
 THEME = '../pelican-bootstrap3'
-BOOTSTRAP_THEME = 'darkly'
-PYGMENTS_STYLE = 'monokai'
+BOOTSTRAP_THEME = 'journal'
+PYGMENTS_STYLE = 'vs'
 USE_PAGER = True
 
 TWITTER_USERNAME = 'PurdonKyle'
