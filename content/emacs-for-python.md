@@ -4,7 +4,7 @@ Category: Software, Editors
 Tags: python, development
 Summary: Emacs is more than a capable IDE for Python.
 
-A recent series of posts [Setting Up Sublime Text 3 for Full Stack Python Development](https://realpython.com/blog/python/setting-up-sublime-text-3-for-full-stack-python-development/) and [VIM and Python - a Match Made in Heaven](https://realpython.com/blog/python/vim-and-python-a-match-made-in-heaven/) were posted here that showed how capable Sublime and Vim are for Python development. Here I present another editor, Emacs, as a powerful Python development environment. **While it's an undisputable fact that emacs is the best editor I'll keep an open mind and present Emacs from a fresh installation to a complete Python IDE so that you can make an informed decision when choosing your go-to Python IDE.**
+A recent series of posts [Setting Up Sublime Text 3 for Full Stack Python Development](https://realpython.com/blog/python/setting-up-sublime-text-3-for-full-stack-python-development/) and [VIM and Python - a Match Made in Heaven](https://realpython.com/blog/python/vim-and-python-a-match-made-in-heaven/) were posted here that showed how capable Sublime and Vim are for Python development. Here I present another editor, Emacs, as a powerful Python development environment. **While it's an indisputable fact that emacs is the best editor, I'll keep an open mind and present Emacs from a fresh installation to a complete Python IDE so that you can make an informed decision when choosing your go-to Python IDE.**
 
 # Installation and Emacs Basics
 
@@ -16,9 +16,9 @@ Installation of emacs is a topic that does not need to be covered in another blo
 
 ## Basic Emacs
 
-Another topic that does not need to be covered is the basics of emacs. The easiest way to learn emacs is to follow the built-in tutorial. The topics covered in this post do not require that you know how to use emacs yet, rather they highlight what you can do after learning the basics.
+Another topic that does not need to be covered is the basics of emacs. The easiest way to learn emacs is to follow the built-in tutorial. The topics covered in this post do not require that you know how to use emacs yet; rather, they highlight what you can do after learning the basics.
 
-> To enter the tutorial use your arrow keys to position the cursor over the words "Emacs Tutorial" and press Enter.
+> To enter the tutorial, use your arrow keys to position the cursor over the words "Emacs Tutorial" and press Enter.
 
 The following is the first passage from the tutorial and is important for some of the examples shown in the rest of this post.
 
@@ -34,19 +34,19 @@ write that in full each time, we'll use the following abbreviations:
 	  ESC key and then type <chr>.  We write <ESC> for the ESC key.
 ```
 
-In the rest of the post key entries like `C-x C-s` (save) will be shown. This means the control and x key were pressed at the same time and then the control and s key at the same time. This is the basic form of interacting with emacs. Please follow the built-in tutorial to learn more.
+In the rest of the post key entries like `C-x C-s` (save) will be shown. This means the control and x key were pressed at the same time, and then the control and s key at the same time. This is the basic form of interacting with emacs. Please follow the built-in tutorial to learn more.
 
 ## Configuration & Packages
 
-One of the great benefits of emacs is the simplicity and power of configuration. The core of emacs configuration is the file `init.el` (el is emacs-lisp). For a UNIX environment this file should be put in `$HOME/.emacs.d/init.el` and for windows (if the *HOME* environment variable is not set) `C:/.emacs.d/init.el`. Configuration snippets will be presented throughout the post and a complete emacs configuration for Python will be included in the conclusion.
+One of the great benefits of emacs is the simplicity and power of configuration. The core of emacs configuration is the file `init.el` (el is emacs-lisp). For a UNIX environment this file should be put in `$HOME/.emacs.d/init.el` and for Windows (if the *HOME* environment variable is not set) `C:/.emacs.d/init.el`. Configuration snippets will be presented throughout the post and a complete emacs configuration for Python will be included in the conclusion.
 
 The core of customizing emacs is installing packages from various repositories. The primary emacs package repository is [melpa](https://melpa.org/#/). All of the packages presented in this post will be installed from this repository.
 
 ## Styling (Themes & More)
 
-To begin the following configuration snippet provides package installation and installs a theme package. My prefered theme is [material](https://github.com/cpaulik/emacs-material-theme) so we'll be using that for the rest of the post.
+To begin, the following configuration snippet provides package installation and installs a theme package. My prefered theme is [material](https://github.com/cpaulik/emacs-material-theme), so we'll be using that for the rest of the post.
 
-> Configuration snippets will be presented throughout the post and a complete emacs configuration for Python will be included in the conclusion.
+> Configuration snippets will be presented throughout the post, and a complete emacs configuration for Python will be included in the conclusion.
 
 ```emacs-lisp
 ;; init.el --- emacs configuration
@@ -88,13 +88,11 @@ The first section of the configuration snippet `;; INSTALL PACKAGES` installs tw
 2. Loads the material theme.
 3. Enables line numbers globally.
 
-Enabling something globally means that it will apply to all buffers (open items) in emacs. This means if you open a python file, markdown file, and text file they will all have line numbers shown. You can enable things per mode (python-mode, markdown-mode, text-mode) and this will be shown later when setting up Python.
+Enabling something globally means that it will apply to all buffers (open items) in emacs. This means if you open a Python file, markdown file, and text file, they will all have line numbers shown. You can enable things per mode (python-mode, markdown-mode, text-mode) and this will be shown later when setting up Python.
 
 Now that we have a complete (basic) configuration file we can restart emacs and see the changes. If you placed the `init.el` file in the correct default location it will automatically be picked up.
 
-> For a UNIX environment this file should be put in `$HOME/.emacs.d/init.el` and for windows (if the *HOME* environment variable is not set) `C:/.emacs.d/init.el`.
-
-As an alternative you can start emacs from the command-line with `emacs -q --load <path to init.el>`. When loaded our initial emacs window looks a bit nicer!
+As an alternative, you can start emacs from the command-line with `emacs -q --load <path to init.el>`. When loaded, our initial emacs window looks a bit nicer!
 
 ![emacs themed](images/emacs-themed.png)
 
@@ -102,7 +100,7 @@ The following image shows some other basic features that come with emacs out of 
 
 ![emacs features](images/emacs-simple-features.png)
 
-One of my favorite simple features of emacs is being able to do a quick recursive-grep search. For example say I want to find all instances of the word *python* in any *.md* (markdown) in a given directory. `M-x rgrep`.
+One of my favorite simple features of emacs is being able to do a quick recursive-grep search. For example, say I want to find all instances of the word *python* in any *.md* (markdown) in a given directory. `M-x rgrep`.
 
 ![emacs rgrep](images/emacs-rgrep.gif)
 
@@ -110,7 +108,7 @@ With this basic configuration complete we can begin to dive into configuring Pyt
 
 # Elpy (Emacs Lisp Python Environment)
 
-Emacs includes a python-mode out of the box that provides indentation and syntax highlighting. However to compete with python specific IDE's (Integrated Development Environments) we'll certainly want more. The [elpy](https://elpy.readthedocs.org/en/latest/) package provides most of the other features we will want. Out of the box the elpy provides us with a near complete set of Python IDE features, including:
+Emacs includes a python-mode out of the box that provides indentation and syntax highlighting. However, to compete with Python-specific IDE's (Integrated Development Environments), we'll certainly want more. The [elpy](https://elpy.readthedocs.org/en/latest/) package provides most of the other features we will want. Out of the box, elpy provides us with a near complete set of Python IDE features, including:
 
 * Automatic Indentation
 * Syntax Highlighting
@@ -120,9 +118,9 @@ Emacs includes a python-mode out of the box that provides indentation and syntax
 * Virtual Environment Support
 * Much more!
 
-To install and enable elpy we need to add a bit of configuration and install `flake8` and `jedi` using your prefered method for installing Python packages (pip or conda for example).
+To install and enable elpy we need to add a bit of configuration and install `flake8` and `jedi` using your prefered method for installing Python packages (pip or conda, for example).
 
-> Configuration snippets will be presented throughout the post and a complete emacs configuration for Python will be included in the conclusion.
+> Configuration snippets will be presented throughout the post, and a complete emacs configuration for Python will be included in the conclusion.
 
 The following will install the elpy package:
 
@@ -141,30 +139,30 @@ With the new configuration we can restart emacs and open up a Python file to see
 
 ![emacs elpy basic](images/emacs-elpy-basic.png)
 
-Shown is this image are the following features:
+Shown in this image are the following features:
 
 * Automatic Indentation (as you type and hit RET lines are auto-indented)
 * Syntax Highlighting
 * Syntax Checking (error indicators at line 3)
 * Auto-Completion (list methods on line 9+)
 
-In addition let's say we want to run this script. In something like IDLE or Sublime Text you'll have a button/command to run the current script. Emacs is no different, we just type `C-c C-c` in our python buffer and ...
+In addition, let's say we want to run this script. In something like IDLE or Sublime Text you'll have a button/command to run the current script. Emacs is no different, we just type `C-c C-c` in our Python buffer and ...
 
 ![emacs elpy execute](images/emacs-elpy-execute.png)
 
-Often we'll want to be running a virtual environment and executing our code using the packages installed there. To use a virtual environment in emacs we type `M-x pyvenv-activate` and follow the prompts. You can deactivate a virtualenv with `M-x pyvenv-deactivate`. If you have an issues elpy provides an interface for debugging the environment and any issues you may be having with elpy itself. By typing `M-x elpy-config` we get the following dialog which provides valuable debugging information.
+Often we'll want to be running a virtual environment and executing our code using the packages installed there. To use a virtual environment in emacs, we type `M-x pyvenv-activate` and follow the prompts. You can deactivate a virtualenv with `M-x pyvenv-deactivate`. Elpy provides an interface for debugging the environment and any issues you may be having with elpy itself. By typing `M-x elpy-config` we get the following dialog, which provides valuable debugging information.
 
 ![emacs elpy config](images/emacs-elpy-config.png)
 
-With this all of the basics of a Python IDE in emacs have been covered. Now let's put some icing on this cake!
+With this, all of the basics of a Python IDE in emacs have been covered. Now let's put some icing on this cake!
 
 # Additional Python Features
 
-In addition to all the basic IDE features described above emacs provides us some additional features for Python. While this is not an exhaustive list  pep8 compliance (with autopep8) and integration with IPython/Jupyter will be covered. However before that I want to cover a quick syntax checking preference.
+In addition to all the basic IDE features described above, emacs provides us some additional features for Python. While this is not an exhaustive list, PEP8 compliance (with autopep8) and integration with IPython/Jupyter will be covered. However, before that I want to cover a quick syntax checking preference.
 
 ## Better Syntax Checking (Flycheck v. Flymake)
 
-By default emacs+elpy comes with a package called flymake to support syntax checking. However another emacs package, flycheck, is available and supports realtime syntax checking which is much better in my opinion. Luckily switching out for flycheck is just a tiny bit of configuration.
+By default emacs+elpy comes with a package called flymake to support syntax checking. However, another emacs package, flycheck, is available and supports realtime syntax checking, which is much better in my opinion. Luckily switching out for flycheck is just a tiny bit of configuration.
 
 ```emacs-lisp
 (defvar myPackages
@@ -187,7 +185,7 @@ Now we get realtime feedback when editing Python code.
 
 ## PEP8 Compliance (Autopep8)
 
-Love it or hate it (love it is the correct answer) PEP8 is here to stay. If you want to follow all or some of the standards you'll probably want an automated way to do so. The [autopep8](https://pypi.python.org/pypi/autopep8/) tool is the solution. It integrates with emacs so that when you save `C-x C-s` autopep8 will automatically format and correct any PEP8 errors (excluding any you wish to). First you will need to install the Python package autopep8 with using your prefered method then add the following emacs configuration.
+Love it or hate it (love it is the correct answer), PEP8 is here to stay. If you want to follow all or some of the standards, you'll probably want an automated way to do so. The [autopep8](https://pypi.python.org/pypi/autopep8/) tool is the solution. It integrates with emacs so that when you save `C-x C-s` autopep8 will automatically format and correct any PEP8 errors (excluding any you wish to). First you will need to install the Python package autopep8 using your prefered method, then add the following emacs configuration.
 
 ```emacs-lisp
 (defvar myPackages
@@ -203,7 +201,7 @@ and
 (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
 ```
 
-Now (after forcing some pep8 errors) when we save our demo python file the errors will automatically be corrected.
+Now (after forcing some pep8 errors) when we save our demo Python file, the errors will automatically be corrected.
 
 ![emacs elpy autopep8](images/emacs-elpy-autopep8.gif)
 
@@ -219,7 +217,7 @@ Now when we run our Python code with `C-c C-c` we will be presented with the IPy
 
 ![emacs elpy ipython](images/emacs-elpy-ipython.png)
 
-While this is pretty useful on it's own the real magic is the notebook integration. I'll assume that you already know how to launch a Jupyter Notebook server (if not [check this out](http://jupyter-notebook-beginner-guide.readthedocs.org/en/latest/what_is_jupyter.html)). Again we just need a bit of configuration.
+While this is pretty useful on its own, the real magic is the notebook integration. I'll assume that you already know how to launch a Jupyter Notebook server (if not [check this out](http://jupyter-notebook-beginner-guide.readthedocs.org/en/latest/what_is_jupyter.html)). Again we just need a bit of configuration.
 
 ```emacs-lisp
 (defvar myPackages
@@ -241,17 +239,17 @@ However we can complete the exact same task by connecting to and interacting wit
 
 # Additional Emacs IDE Features
 
-Now that all of the basic Python IDE features (and some really awesome extras) have been covered there are a few other things that an IDE should be able to handle. First up is git integration.
+Now that all of the basic Python IDE features (and some really awesome extras) have been covered, there are a few other things that an IDE should be able to handle. First up is git integration.
 
 ## Git Integration (Magit)
 
-[Magit](http://magit.vc/) is the most popular non-utility package on melpa and is used by nearly every emacs user that uses git. It's incredibly powerful and far more comprehensive than I can cover in this post. Luckily [masteringemacs](https://www.masteringemacs.org/) has a great post covering magit [here](https://www.masteringemacs.org/article/introduction-magit-emacs-mode-git). The following image is from the masteringemacs post and gives you a taste for what the git integration looks like in emacs.
+[Magit](http://magit.vc/) is the most popular non-utility package on melpa and is used by nearly every emacs user who uses git. It's incredibly powerful and far more comprehensive than I can cover in this post. Luckily [masteringemacs](https://www.masteringemacs.org/) has a great post covering magit [here](https://www.masteringemacs.org/article/introduction-magit-emacs-mode-git). The following image is from the masteringemacs post and gives you a taste for what the git integration looks like in emacs.
 
 ![masteringemacs magit](images/masteringemacs-magit.png)
 
 ## Other Modes
 
-I want to note that one of the major benefits of using emacs over a python specific IDE is that you get compatibility with much more than just Python. In a single day I often work with Python, Golang, JavaScript, Markdown, JSON, and more. Never leaving emacs and having complex support for all of these languages in a single editor is very efficient. You can check out my personal emacs configuration [here](https://github.com/kpurdon/kp-emacs). It includes support for:
+One of the major benefits of using emacs over a Python-specific IDE is that you get compatibility with much more than just Python. In a single day I often work with Python, Golang, JavaScript, Markdown, JSON, and more. Never leaving emacs and having complex support for all of these languages in a single editor is very efficient. You can check out my personal emacs configuration [here](https://github.com/kpurdon/kp-emacs). It includes support for:
 
 * Python
 * Golang
@@ -269,15 +267,15 @@ In addition to lots of other emacs configuration goodies.
 
 ## Emacs In The Terminal
 
-After learning emacs you'll want emacs keybindings everywhere. This is as simple as typing `set -o emacs` at your bash prompt. However one of the powers of emacs is that you can run emacs itself in headless mode in your terminal. This is my default environment. To do so just start emacs by typing `emacs -nw` at your bash prompt and you'll be running a headless emacs.
+After learning emacs you'll want emacs keybindings everywhere. This is as simple as typing `set -o emacs` at your bash prompt. However, one of the powers of emacs is that you can run emacs itself in headless mode in your terminal. This is my default environment. To do so, just start emacs by typing `emacs -nw` at your bash prompt and you'll be running a headless emacs.
 
 # Conclusion
 
-As you can see emacs is clearly the best editor.
+As you can see, emacs is clearly the best editor.
 
 # Real Conclusion
 
-Fine, fine, there are a lot of great options out there for Python IDE's but I would absolutely recommend learning either Vim or Emacs as they are by far the most versatile development environments possible. I said I'd leave you with the complete emacs configuration so here it is.
+Fine, fine, there are a lot of great options out there for Python IDE's, but I would absolutely recommend learning either Vim or Emacs as they are by far the most versatile development environments possible. I said I'd leave you with the complete emacs configuration, so here it is.
 
 ```emacs-lisp
 ;; init.el --- emacs configuration
